@@ -1,8 +1,10 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import ReactHashtag from "@mdnm/react-hashtag";
 import styled from "styled-components";
+
+import TokenContext from "../../contexts/tokenContext";
 
 import defaultImage from "../../assets/images/defaultImage.jpg";
 import likeIcon from "../../assets/images/likeIcon.svg";
@@ -10,11 +12,15 @@ import likeIcon from "../../assets/images/likeIcon.svg";
 export default function Post({data}) {
     const [metadata, setMetadata] = useState(null);
     const navigate = useNavigate();
-    console.log(data.content);
+    const { token } = useContext(TokenContext)
 
     // busca os metadados do link
     useEffect(() => {
-        axios.get(`http://localhost:4000/posts/${data.id}/metadata`)
+        axios.get(`http://localhost:4000/posts/${data.id}/metadata`, {
+            headers: {
+                authorization: `Bearer ${token}`
+            }
+        })
         .then(response => {
             setMetadata(response.data);
         })
