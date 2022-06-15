@@ -31,7 +31,25 @@ const PageContainer = styled.div`
                 line-height: 84px;
                 letter-spacing: 0.05em;
                 color: #FFFFFF;
+                cursor: pointer;
             }
+
+            h1:hover {        
+
+                -webkit-transform: scale(1.4);
+                -ms-transform: scale(1.4);
+                transform: scale(1.4);
+                -moz-transition: 2s ease-out;
+            }
+
+            h1:not(:hover) {
+
+                padding-top: 0px;
+                -webkit-transform: scale(1);
+                -ms-transform: scale(1);
+                transform: scale(1);
+                -moz-transition: 0.9s ease-out;
+            } 
 
             h2 {
                 font-family: 'Oswald';
@@ -40,7 +58,26 @@ const PageContainer = styled.div`
                 line-height: 34px;
                 text-align: center;
                 color: #FFFFFF;
+                cursor: pointer;
             }
+
+            h2:hover {        
+                
+                padding-top: 20px;
+                -webkit-transform: scale(1.4);
+                -ms-transform: scale(1.4);
+                transform: scale(1.4);
+                -moz-transition: 2s ease-out;
+            }
+
+            h2:not(:hover) {
+
+                padding-top: 0px;
+                -webkit-transform: scale(1);
+                -ms-transform: scale(1);
+                transform: scale(1);
+                -moz-transition: 0.9s ease-out;
+            } 
         }
     }
 
@@ -98,6 +135,22 @@ const PageContainer = styled.div`
                     color: #FFFFFF;
                 }
 
+                button:hover {        
+
+                    -webkit-transform: scale(1.1);
+                    -ms-transform: scale(1.1);
+                    transform: scale(1.1);
+                    -moz-transition: 0.9s ease-out;
+                }
+    
+                button:not(:hover) {
+    
+                    -webkit-transform: scale(1);
+                    -ms-transform: scale(1);
+                    transform: scale(1);
+                    -moz-transition: 0.9s ease-out;
+                }
+
                 a {
 
                     cursor: pointer;
@@ -112,6 +165,21 @@ const PageContainer = styled.div`
                     color: #FFFFFF;
                 }
 
+                a:hover {        
+
+                    -webkit-transform: scale(1.1);
+                    -ms-transform: scale(1.1);
+                    transform: scale(1.1);
+                    -moz-transition: 0.9s ease-out;
+                }
+    
+                a:not(:hover) {
+    
+                    -webkit-transform: scale(1);
+                    -ms-transform: scale(1);
+                    transform: scale(1);
+                    -moz-transition: 0.9s ease-out;
+                }
             }
         }
     }
