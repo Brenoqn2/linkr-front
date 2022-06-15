@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+
+import TokenContext from "../../../contexts/tokenContext";
 
 import PageContainer from "../../Resources/StyleAuthentication";
 import TitleAuthentication from "../../Resources/StyleTitleAuthentication.jsx";
@@ -11,26 +13,25 @@ export default function LoginPage() {
 
     const API = 'https://linkr-back-brenoqn2.herokuapp.com/'
     const navigate = useNavigate();
-    const [data, setData] = useState({ email: null, password: null, loading: false });
+    const [data, setData] = useState({ email: null, password: null});
+    const [loading, setLoading] = useState(false);
+    const { setToken } = useContext(TokenContext);
 
     function HandleSubmit(e) {
 
         e.preventDefault();
-        localStorage.removeItem('kento');
         setData({ ...data, loading: true });
 
         if (ValidateThisEmailAndPass(data.email, data.password)) {
 
             axios.post(API + 'signin', { email: data.email, password: data.password }).then(res => {
-                localStorage.setItem('kento', res.data.token);
+                setToken(res.data.token);
                 navigate('/timeline');
-
             }).catch(err => {
-
                 alert(`ops !\n\n${err.response.data}`)
-                setData({ ...data, loading: false });
             });
         }
+        setLoading(false);
     }
 
     return (
@@ -43,7 +44,7 @@ export default function LoginPage() {
                             onChange={e => setData({ ...data, email: e.target.value })} />
                         <input type='password' placeholder='password' required
                             onChange={e => setData({ ...data, password: e.target.value })} />
-                        {data.loading ? Loader : <button type='submit'>Sign In</button>}
+                        {loading ? Loader : <button type='submit'>Sign In</button>}
                         <Link to='/sign-up'>First time? Create an account!</Link>
                     </form>
                 </div>
