@@ -12,6 +12,7 @@ export default function Post({data}) {
     const navigate = useNavigate();
     console.log(data.content);
 
+    // busca os metadados do link
     useEffect(() => {
         axios.get(`http://localhost:4000/posts/${data.id}/metadata`)
         .then(response => {
@@ -30,38 +31,41 @@ export default function Post({data}) {
 
     return (
         <PostItem>
-            <UserPicture onClick={redirectToUser} url={data.picture}/>
-            <Like> 
-                <img src={likeIcon} alt="Like" />
-                <span>10 likes</span>
-            </Like>
+            <Container>
+                <UserPicture onClick={redirectToUser} url={data.picture}/>
+                <Like>
+                    <img src={likeIcon} alt="Like" />
+                    <span>10 likes</span>
+                </Like>
+            </Container>
             
-            <UserName onClick={() => navigate(`users/${data.userId}`)}>
-                {data.username}
-            </UserName>
-            
-            <Desc>
-                <ReactHashtag 
-                    renderHashtag={val => <Hashtag onClick={() => navigate(`/hashtag/${val.replace('#', '')}`)}>{val}</Hashtag>}
-                >
-                    {data.content}
-                </ReactHashtag>
-            </Desc>
-           
-            <LinkSnippet onClick={() => window.open(data.link, '_blank')}>
-                <div>
-                    <h2>
-                        {metadata?.title}
-                    </h2>
-                    <p>
-                        {metadata?.description}
-                    </p>
-                    <span>
-                        {metadata?.url}
-                    </span>
-                </div>
-                <img onError={addDefaultImg} src={metadata?.image} alt={metadata?.title}/>
-            </LinkSnippet>
+            <Container>
+                <UserName onClick={() => navigate(`users/${data.userId}`)}>
+                    {data.username}
+                </UserName>
+                
+                <Desc>
+                    <ReactHashtag
+                        renderHashtag={val => <Hashtag onClick={() => navigate(`/hashtag/${val.replace('#', '')}`)}>{val}</Hashtag>}
+                    >
+                        {data.content}
+                    </ReactHashtag>
+                </Desc>
+                <LinkSnippet onClick={() => window.open(data.link, '_blank')}>
+                    <div>
+                        <h2>
+                            {metadata?.title}
+                        </h2>
+                        <p>
+                            {metadata?.description}
+                        </p>
+                        <span>
+                            {metadata?.url}
+                        </span>
+                    </div>
+                    <img onError={addDefaultImg} src={metadata?.image} alt={metadata?.title}/>
+                </LinkSnippet>
+            </Container>
 
         </PostItem>
     )
@@ -70,16 +74,33 @@ export default function Post({data}) {
 const PostItem = styled.li`
     width: 611px;
     height: 276px;
-    padding: 20px 20px 20px 85px;
+    padding: 20px 20px 20px 20px;
 
     display: flex;
-    flex-direction: column;
+    column-gap: 20px;
     justify-content: space-between;
-    align-items: flex-start;
 
     background-color: #171717;
     border-radius: 16px;
     position: relative;
+`
+
+const Container = styled.div`
+    min-height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    &:first-child {
+        row-gap: 20px;
+    }
+
+    &:last-child {
+        align-items: flex-start;
+        justify-content: space-between;
+    }
 `
 
 const Hashtag = styled.p`
@@ -100,9 +121,6 @@ const UserPicture = styled.div`
     background-image:  url(${(props) => props.url ? props.url : defaultImage});
     background-size: contain;
 
-    position: absolute;
-    top: 20px;
-    left: 20px;
 `
 
 const Desc = styled.p`
@@ -161,9 +179,6 @@ const Like = styled.div`
     justify-content: center;
     align-items: center;
     row-gap: 10px;
-    position: absolute;
-    top: 90px;
-    left: 25px;
 
     img {
         width: 20px;
