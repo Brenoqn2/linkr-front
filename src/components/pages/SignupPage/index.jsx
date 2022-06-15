@@ -37,9 +37,9 @@ export default function LoginPage() {
             .then(res => navigate('/'))
             .catch(err => {
                 alert(`ops !\n\n${err.response.data}`);
-                setData({ ...data, loading: false });
             })
         }
+        setLoading(false);
     }
 
     return (
@@ -69,7 +69,7 @@ export default function LoginPage() {
                             required
                             onChange={e => setData({ ...data, confirmPassword: e.target.value })} />
 
-                        {data.loading ? Loader : <button type='submit'>Sign Up</button>}
+                        {loading ? Loader : <button type='submit'>Sign Up</button>}
 
                         <Link to='/'>Already have an account ? Sign In !</Link>
                     </form>

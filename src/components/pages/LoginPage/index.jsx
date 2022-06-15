@@ -30,8 +30,8 @@ export default function LoginPage() {
             }).catch(err => {
                 alert(`ops !\n\n${err.response.data}`)
             });
-            setLoading(false);
         }
+        setLoading(false);
     }
 
     return (
