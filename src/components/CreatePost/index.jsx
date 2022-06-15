@@ -6,6 +6,8 @@ import styled from "styled-components";
 import TokenContext from "../../contexts/tokenContext";
 import UserContext from "../../contexts/userContext";
 
+import defaultImage from "../../assets/images/defaultImage.jpg";
+
 export default function CreatePost() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -44,10 +46,14 @@ export default function CreatePost() {
     console.log(config);
 
     axios
-      .post(`${API}/post`, config, {
-        link: formData.link,
-        content: formData.content,
-      })
+      .post(
+        `${API}/post`,
+        {
+          link: formData.link,
+          content: formData.content,
+        },
+        config
+      )
       .then((res) => {
         console.log(res);
         navigate("/timeline");
@@ -188,4 +194,7 @@ const UserPicture = styled.div`
   height: 50px;
   margin-right: 16px;
   border-radius: 50%;
+
+  background-image: url(${(props) => (props.url ? props.url : defaultImage)});
+  background-size: contain;
 `;

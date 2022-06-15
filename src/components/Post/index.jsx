@@ -20,7 +20,7 @@ export default function Post({ data }) {
   // busca os metadados do link
   useEffect(() => {
     axios
-      .get(`${API}/${data.id}/metadata`, {
+      .get(`${API}/posts/${data.id}/metadata`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
