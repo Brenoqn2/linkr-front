@@ -1,170 +1,131 @@
-import axios from "axios"
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import axios from "axios";
+import { useEffect, useState, useContext } from "react";
+import { ThreeDots } from "react-loader-spinner";
+import styled from "styled-components";
 
-import styled from "styled-components"
+import TokenContext from "../../../contexts/tokenContext";
+import UserContext from "../../../contexts/userContext";
+
+import PostsList from "../../PostsList";
+import Header from "../../Header";
+import CreatePost from "../../CreatePost";
 
 export default function TimelinePage() {
-  const navigate = useNavigate()
-  const [formData, setFormData] = useState({
-    link: "",
-    content: "",
-    loading: false,
-  })
-  const API = "https://linkr-back-brenoqn2.herokuapp.com/"
-  //mudar para rota .env do deploy vercel
+  const [posts, setPosts] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { token } = useContext(TokenContext);
+  const { userData, setUserData } = useContext(UserContext);
 
-  function disabledInput() {
-    return (
-      <>
-        <input value={formData.link} disabled />
-        <input className="link" value={formData.content} disabled />
-      </>
-    )
-  }
+  const API = "https://linkr-back-brenoqn2.herokuapp.com";
+  // const API = "http://localhost:4000";
 
-  function handleChange(e) {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
-  }
+  useEffect(() => {
+    const config = {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    };
 
-  function handleSubmit(e) {
-    e.preventDefault()
-    // localStorage.removeItem('kento');
-    setFormData({ ...formData, loading: true })
+    axios.get(`${API}/user`, config).then((response) => {
+      console.log(response);
+      setUserData({ ...response.data });
+    });
 
     axios
-      .post(`${API}/post`, {
-        link: formData.link,
-        content: formData.content,
+      .get(`${API}/posts`, config)
+      .then((response) => {
+        setPosts(response.data);
       })
-      .then((res) => {
-        console.log(res)
-        // localStorage.setItem("kento", res.data.token)
-        // navigate("/timeline")
-      })
-      .catch((e) => {
-        alert("Houve um erro ao publicar seu link")
-        console.log(`ops !\n\n${e.response.data}`)
-        setFormData({ ...formData, loading: false })
-      })
-  }
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
+  }, []);
 
+  const postsList = posts ? (
+    <PostsList posts={posts}></PostsList>
+  ) : (
+    <NoContent>There are no posts yet</NoContent>
+  );
+
+  const loadingElement = (
+    <LoadingContainer>
+      <ThreeDots width={100} color={"#fff"} />
+    </LoadingContainer>
+  );
   return (
     <TimelineContainer>
-      <p>timeline</p>
-      <PostCreator onSubmit={handleSubmit}>
-        <p>What are you going to share today?</p>
-        {formData.loading ? (
-          disabledInput()
-        ) : (
-          <>
-            <input
-              placeholder="http://..."
-              name="link"
-              onChange={handleChange}
-              value={formData.link}
-              type="text"
-              required
-            />
-            <input
-              className="link"
-              placeholder="Awesome article about #javascript"
-              name="content"
-              onChange={handleChange}
-              value={formData.content}
-              type="text"
-            />
-          </>
-        )}
-        <Button>
-          {formData.loading ? (
-            <button disabled type="submit">
-              Publishing...
-            </button>
-          ) : (
-            <button type="submit">Publish</button>
-          )}
-        </Button>
-      </PostCreator>
+      <Header profilePic={userData?.picture} username={userData?.username} />
+
+      <Main>
+        <h1>timeline</h1>
+        <Content>
+          <PostsContent>
+            <CreatePost />
+            {loading ? loadingElement : postsList}
+          </PostsContent>
+          <TrendingsContent></TrendingsContent>
+        </Content>
+      </Main>
     </TimelineContainer>
-  )
+  );
 }
 
 const TimelineContainer = styled.main`
   width: 100%;
-  height: 100vh;
-  background-color: #e5e5e5;
-`
+  min-height: 100vh;
+  background-color: #333333;
+  padding-top: 70px;
+  margin-top: 30px;
+  h1 {
+    display: inline-block;
+    width: 100%;
+    font-family: "Oswald", sans-serif !important;
+    font-size: 43px;
+    font-weight: 700;
+    color: #fff;
+  }
+`;
 
-const PostCreator = styled.form`
-  width: 100%;
-  height: 164px;
-  padding: 10px 15px;
-  word-break: break-all;
-
+const LoadingContainer = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
+`;
 
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-
-  background-color: #ffffff;
-  p {
-    font-weight: 300;
-    font-size: 17px;
-    line-height: 20px;
-    text-align: center;
-    margin-bottom: 10px;
-
-    color: #707070;
-  }
-  input {
-    width: 100%;
-    height: 30px;
-    padding: 0 10px;
-
-    background: #efefef;
-    border-radius: 5px;
-    border: none;
-
-    font-size: 13px;
-    margin-bottom: 5px;
-
-    ::placeholder {
-      font-family: "Lato";
-      font-weight: 300;
-      font-size: 13px;
-      line-height: 16px;
-
-      color: #949494;
-    }
-  }
-  .link {
-    height: 50px;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    hyphens: auto;
-  }
-`
-
-const Button = styled.div`
+const NoContent = styled.div`
   display: flex;
-  width: 100%;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-size: 20px;
+`;
 
-  justify-content: flex-end;
-  button {
-    width: 112px;
-    height: 22px;
+const Main = styled.div`
+  max-width: fit-content;
+  margin: 0 auto;
+  display: flex;
+  gap: 50px;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+`;
 
-    background: #1877f2;
-    border-radius: 5px;
-    border: none;
+const Content = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+`;
 
-    font-weight: 700;
-    font-size: 13px;
-    line-height: 16px;
-    text-align: center;
+const PostsContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-width: 611px;
+`;
 
-    color: #ffffff;
-  }
-`
+const TrendingsContent = styled.div`
+  width: 301px;
+  height: 406px;
+  background-color: #171717;
+  border-radius: 16px;
+`;
