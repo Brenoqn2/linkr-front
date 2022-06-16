@@ -85,7 +85,7 @@ export default function LoginPage() {
 }
 
 function GetAvatar(data, setData) {
-    let max_size = 1024 * 1024; // 1mb
+    let max_size = 70000; // 70kb
     const file = document.getElementById('file').files[0];
     const reader = new FileReader();
     reader.readAsDataURL(file);
