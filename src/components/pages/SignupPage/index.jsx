@@ -72,7 +72,7 @@ export default function LoginPage() {
                             onChange={e => setData({ ...data, confirmPassword: e.target.value })} />
 
                         <label htmlFor="file">{data.avatar ? 'Update Avatar' : 'Choose avatar'}</label>
-                        <input type="file" id="file" hidden accept=".png, .jpg, jpeg"
+                        <input type="file" id="file" hidden accept=".png, .jpg, .jpeg"
                             onChange={e => GetAvatar(data, setData)} />
 
                         {loading ? Loader : <button type='submit'>Sign Up</button>}
