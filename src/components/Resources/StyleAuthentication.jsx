@@ -139,7 +139,25 @@ const PageContainer = styled.div`
 
                 label {
                     
-                    cursor: pointer; 
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+
+                    margin-top: 1%;
+                    width: 85%;
+                    height: 15%;
+                    background: #1877f2;
+                    border: none;
+                    cursor: pointer;
+                    border-radius: 4px;
+
+                    font-family: 'Oswald';
+                    font-style: normal;
+                    font-weight: 700;
+                    font-size: 22px;
+                    line-height: 33px;
+                    color: #FFFFFF;
                 }
                     
                 button:hover {        
@@ -158,6 +176,22 @@ const PageContainer = styled.div`
                     -moz-transition: 0.9s ease-out;
                 }
 
+                label:hover {        
+
+                    -webkit-transform: scale(1.1);
+                    -ms-transform: scale(1.1);
+                    transform: scale(1.1);
+                    -moz-transition: 0.9s ease-out;
+                }
+    
+                label:not(:hover) {
+    
+                    -webkit-transform: scale(1);
+                    -ms-transform: scale(1);
+                    transform: scale(1);
+                    -moz-transition: 0.9s ease-out;
+                }
+                
                 a {
 
                     cursor: pointer;
