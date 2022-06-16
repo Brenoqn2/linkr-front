@@ -14,6 +14,8 @@ export default function LoginPage() {
     const [data, setData] = useState({ name: null, email: null, password: null, confirmPassword: null });
     const [loading, setLoading] = useState(false);
 
+    const defaultAvatar = 'https://i.imgur.com/62ufJYt.jpeg'; // até eu arrumar o componente que pega a foto
+
     function HandleSubmit(e) {
 
         e.preventDefault();
@@ -30,7 +32,8 @@ export default function LoginPage() {
                 name: data.name,
                 email: data.email,
                 password: data.password,
-                confirmPassword: data.password
+                confirmPassword: data.password,
+                avatar: defaultAvatar
             };
 
             axios.post(API + 'signup', userData)
