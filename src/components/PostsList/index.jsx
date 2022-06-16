@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Post from "../Post/";
 
 export default function PostsList({posts}) {
-    const content = posts.map(post => <Post data={post}></Post>)
+    const content = posts.map(post => <Post data={post} key={post.id}></Post>)
 
     return (
         <Posts>
@@ -13,6 +13,7 @@ export default function PostsList({posts}) {
 }
 
 const Posts = styled.ul`
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 20px;

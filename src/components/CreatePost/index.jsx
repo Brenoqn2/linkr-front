@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState, useContext } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -8,7 +8,7 @@ import UserContext from "../../contexts/userContext";
 
 import defaultImage from "../../assets/images/defaultImage.jpg";
 
-export default function CreatePost() {
+export default function CreatePost({updatePosts}) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     link: "",
@@ -16,7 +16,7 @@ export default function CreatePost() {
     loading: false,
   });
   const { token } = useContext(TokenContext);
-  const { userData, setUserData } = useContext(UserContext);
+  const { userData } = useContext(UserContext);
 
   const API = "https://linkr-back-brenoqn2.herokuapp.com";
 
@@ -42,9 +42,6 @@ export default function CreatePost() {
       },
     };
 
-    console.log(token);
-    console.log(config);
-
     axios
       .post(
         `${API}/post`,
@@ -55,14 +52,14 @@ export default function CreatePost() {
         config
       )
       .then((res) => {
-        console.log(res);
+        updatePosts();
         navigate("/timeline");
       })
       .catch((e) => {
         alert("Houve um erro ao publicar seu link");
         console.log(`ops !\n\n${e.response.data}`);
-        setFormData({ ...formData, loading: false });
-      });
+      })
+      .finally(() => setFormData({link: "", content: "", loading: false}));
   }
 
   return (
@@ -107,18 +104,26 @@ export default function CreatePost() {
   );
 }
 const PostCreator = styled.form`
-  width: 611px;
+  width: 95%;
   height: 209px;
   margin-bottom: 30px;
   padding: 20px 20px;
   word-break: break-all;
-
+  column-gap: 15px;
   display: flex;
 
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 16px;
   border: none;
   background-color: #fff;
+
+  @media (max-width: 951px) {
+    width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    border-radius: 0;
+  }
 
   p {
     font-weight: 300;
@@ -190,9 +195,8 @@ const Button = styled.div`
 `;
 
 const UserPicture = styled.div`
-  width: 50px;
+  min-width: 50px;
   height: 50px;
-  margin-right: 16px;
   border-radius: 50%;
 
   background-image: url(${(props) => (props.url ? props.url : defaultImage)});
