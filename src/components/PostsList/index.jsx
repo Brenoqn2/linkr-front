@@ -13,6 +13,7 @@ export default function PostsList({posts}) {
 }
 
 const Posts = styled.ul`
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 20px;

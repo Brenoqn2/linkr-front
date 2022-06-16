@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { useViewportWidth } from "../../hooks/useViewportWidth";
 import ReactHashtag from "@mdnm/react-hashtag";
 import styled from "styled-components";
 
@@ -17,6 +18,7 @@ export default function Post({ data }) {
   const navigate = useNavigate();
   const { token } = useContext(TokenContext);
   const { userData } = useContext(UserContext);
+  const screenWidth = useViewportWidth();
 
   const API = "https://linkr-back-brenoqn2.herokuapp.com";
   // const API = "http://localhost:4000";
@@ -43,6 +45,18 @@ export default function Post({ data }) {
     navigate(`/users/${data.userId}`);
   }
 
+  function shortenText(text, charsMax) {
+    let shortenText = text.split(/[\s,.]+/);
+    if(shortenText.length >= charsMax) {
+        shortenText.splice(charsMax);
+        shortenText = shortenText.join(' ');
+
+        if(shortenText[shortenText.length - 1] === '.') shortenText = shortenText.slice(0, -1);
+        return shortenText + '...';
+    }
+    return text;
+  }
+
   function editPost() {
     //TODO
   }
@@ -51,7 +65,7 @@ export default function Post({ data }) {
     //TODO
   }
 
-  function isPostFromUser() {
+  function postOptionsBuilder() {
     if (data.userId === userData.id) {
         return (
             <Options>
@@ -62,7 +76,7 @@ export default function Post({ data }) {
     }
   }
 
-  const postOptions = isPostFromUser();
+  const postOptions = postOptionsBuilder();
 
   return (
     <PostItem>
@@ -95,8 +109,8 @@ export default function Post({ data }) {
         </Desc>
         <LinkSnippet onClick={() => window.open(data.link, "_blank")}>
           <div>
-            <h2>{metadata?.title}</h2>
-            <p>{metadata?.description}</p>
+            <h2>{metadata?.title && screenWidth <= 600 ? shortenText(metadata?.title, 5) : metadata?.title}</h2>
+            <p>{metadata?.description && screenWidth <= 600 ? shortenText(metadata?.description, 10) : metadata?.description}</p>
             <span>{metadata?.url}</span>
           </div>
           <img
@@ -111,17 +125,25 @@ export default function Post({ data }) {
 }
 
 const PostItem = styled.li`
-  width: 611px;
+  width: 95%;
   height: 276px;
   padding: 20px 20px 20px 20px;
 
   display: flex;
   column-gap: 20px;
-  justify-content: space-between;
+  justify-content: flex-start;
 
   background-color: #171717;
   border-radius: 16px;
   position: relative;
+
+  @media (max-width: 951px) {
+    width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    border-radius: 0;
+  }
 `;
 
 const Container = styled.div`
@@ -138,7 +160,14 @@ const Container = styled.div`
 
   &:last-child {
     align-items: flex-start;
-    justify-content: space-between;
+    justify-content: space-around;
+    width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    &:last-child {
+        width: 100%;
+    }
   }
 `;
 
@@ -174,16 +203,19 @@ const Desc = styled.p`
 `;
 
 const LinkSnippet = styled.div`
-  width: 503px;
+  width: 100%;
   height: 155px;
   border: 1px solid #4d4d4d;
   border-radius: 11px;
 
   display: flex;
   justify-content: space-between;
+  column-gap: 10px;
+
 
   img {
     min-width: 154px;
+    max-width: 154px;
     height: 155px;
     border-radius: 0 11px 11px 0;
 
@@ -203,6 +235,7 @@ const LinkSnippet = styled.div`
     h2 {
       font-size: 16px;
       color: #cecece;
+      padding-top: 5px;
     }
 
     p {
@@ -213,8 +246,44 @@ const LinkSnippet = styled.div`
     span {
       font-size: 11px;
       color: #cecece;
+      padding-bottom: 5px;
     }
   }
+
+  @media (max-width: 955px) {
+    width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    height: 115px;
+    width: 100%;
+    
+    img {
+        min-width: 95px;
+        max-width: 95px;
+        height: 115px;
+    }
+
+    p {
+        text-overflow: ellipsis;
+        white-space: normal;
+        font-size: 9px;
+    }
+    
+    span {
+        font-size: 9px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        max-width: 150px;
+    }
+
+    h2 {
+        font-size: 11px;
+    }
+
+  }
+
 `;
 
 const Like = styled.div`

@@ -104,7 +104,7 @@ export default function CreatePost({updatePosts}) {
   );
 }
 const PostCreator = styled.form`
-  width: 611px;
+  width: 95%;
   height: 209px;
   margin-bottom: 30px;
   padding: 20px 20px;
@@ -116,6 +116,14 @@ const PostCreator = styled.form`
   border-radius: 16px;
   border: none;
   background-color: #fff;
+
+  @media (max-width: 951px) {
+    width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    border-radius: 0;
+  }
 
   p {
     font-weight: 300;

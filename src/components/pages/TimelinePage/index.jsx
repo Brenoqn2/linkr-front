@@ -98,10 +98,10 @@ const TimelineContainer = styled.main`
   background-color: #333333;
   padding-top: 70px;
   margin-top: 30px;
+
   h1 {
     display: inline-block;
     width: 100%;
-    font-family: "Oswald", sans-serif !important;
     font-size: 43px;
     font-weight: 700;
     color: #fff;
@@ -165,16 +165,25 @@ const NoContent = styled.div`
 `;
 
 const Main = styled.div`
-  max-width: fit-content;
+  width: 90%;
   margin: 0 auto;
   display: flex;
   gap: 50px;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+
+  @media (max-width: 640px) {
+    width: 100%;
+
+    h1 {
+        padding-left: 20px;
+    }
+  }
 `;
 
 const Content = styled.div`
+  width: 100%;
   display: flex;
   justify-content: space-between;
   gap: 30px;
@@ -184,7 +193,8 @@ const PostsContent = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  min-width: 611px;
+  align-items: flex-start;
+  width: 100%;
 `;
 
 const TrendingsContent = styled.div`
@@ -192,4 +202,7 @@ const TrendingsContent = styled.div`
   height: 406px;
   background-color: #171717;
   border-radius: 16px;
+  @media (max-width: 951px) {
+    display: none;
+  }
 `;
