@@ -6,6 +6,7 @@ import PageContainer from "../../Resources/StyleAuthentication";
 import TitleAuthentication from "../../Resources/StyleTitleAuthentication.jsx";
 import ValidateThisEmailAndPass from "../../Resources/ValidateEmailAndPass";
 import Loader from "../../Resources/Loader";
+import GetAvatar from "../../Resources/GetAvatar";
 
 export default function LoginPage() {
 
@@ -82,15 +83,4 @@ export default function LoginPage() {
             </div>
         </PageContainer>
     )
-}
-
-function GetAvatar(data, setData) {
-    let max_size = 70000; // 70kb
-    const file = document.getElementById('file').files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    if (file.size > max_size) return alert('File is too big!\nMax size is 70kb');
-    reader.onload = function () {
-        setData({ ...data, avatar: reader.result });
-    };
 }
