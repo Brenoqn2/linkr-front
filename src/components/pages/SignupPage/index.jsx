@@ -70,7 +70,7 @@ export default function LoginPage() {
                             required
                             onChange={e => setData({ ...data, confirmPassword: e.target.value })} />
 
-                        <button><label htmlFor="file">Choose avatar</label></button>
+                        <label htmlFor="file">Choose avatar</label>
                         <input type="file" id="file" hidden accept=".png"
                             onChange={e => GetAvatar(data, setData)} />
 
