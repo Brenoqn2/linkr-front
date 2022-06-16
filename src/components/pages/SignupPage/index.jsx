@@ -11,10 +11,8 @@ export default function LoginPage() {
 
     const API = 'https://linkr-back-brenoqn2.herokuapp.com/'
     const navigate = useNavigate();
-    const [data, setData] = useState({ name: null, email: null, password: null, confirmPassword: null });
+    const [data, setData] = useState({ name: null, email: null, password: null, confirmPassword: null, avatar: null });
     const [loading, setLoading] = useState(false);
-
-    const defaultAvatar = 'https://i.imgur.com/62ufJYt.jpeg'; // até eu arrumar o componente que pega a foto
 
     function HandleSubmit(e) {
 
@@ -26,21 +24,21 @@ export default function LoginPage() {
             if (data.password !== data.confirmPassword) {
                 setLoading(false);
                 return alert("Passwords do not match");
-            }               
+            }
 
             const userData = {
                 name: data.name,
                 email: data.email,
                 password: data.password,
                 confirmPassword: data.password,
-                avatar: defaultAvatar
+                avatar: data.avatar ? data.avatar : 'https://i.imgur.com/62ufJYt.jpeg'
             };
 
             axios.post(API + 'signup', userData)
-            .then(res => navigate('/'))
-            .catch(err => {
-                alert(`ops !\n\n${err.response.data}`);
-            })
+                .then(res => navigate('/'))
+                .catch(err => {
+                    alert(`ops !\n\n${err.response.data}`);
+                })
         }
         setLoading(false);
     }
@@ -51,26 +49,30 @@ export default function LoginPage() {
             <div className="login-content">
                 <div className="input-container">
                     <form onSubmit={HandleSubmit}>
-                        <input 
-                            type='text' 
-                            placeholder='name' 
+                        <input
+                            type='text'
+                            placeholder='name'
                             required
                             onChange={e => setData({ ...data, name: e.target.value })} />
-                        <input 
-                            type='text' 
-                            placeholder='email' 
+                        <input
+                            type='text'
+                            placeholder='email'
                             required
                             onChange={e => setData({ ...data, email: e.target.value })} />
-                        <input 
-                            type='password' 
-                            placeholder='password' 
+                        <input
+                            type='password'
+                            placeholder='password'
                             required
                             onChange={e => setData({ ...data, password: e.target.value })} />
-                        <input 
-                            type='password' 
-                            placeholder='confirm password' 
+                        <input
+                            type='password'
+                            placeholder='confirm password'
                             required
                             onChange={e => setData({ ...data, confirmPassword: e.target.value })} />
+
+                        <button><label htmlFor="file">Choose avatar</label></button>
+                        <input type="file" id="file" hidden accept=".png"
+                            onChange={e => GetAvatar(data, setData)} />
 
                         {loading ? Loader : <button type='submit'>Sign Up</button>}
 
@@ -80,4 +82,15 @@ export default function LoginPage() {
             </div>
         </PageContainer>
     )
+}
+
+function GetAvatar(data, setData) {
+    let max_size = 1024 * 1024; // 1mb
+    const file = document.getElementById('file').files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    if (file.size > max_size) return alert('File is too big!');
+    reader.onload = function () {
+        setData({ ...data, avatar: reader.result });
+    };
 }

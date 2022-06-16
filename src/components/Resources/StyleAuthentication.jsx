@@ -100,6 +100,7 @@ const PageContainer = styled.div`
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
+                margin-top: 20px;
 
                 input {
 
@@ -120,6 +121,7 @@ const PageContainer = styled.div`
 
                 button {
                 
+                    margin-top: 1%;
                     width: 85%;
                     height: 15%;
                     background: #1877f2;
@@ -135,6 +137,11 @@ const PageContainer = styled.div`
                     color: #FFFFFF;
                 }
 
+                label {
+                    
+                    cursor: pointer; 
+                }
+                    
                 button:hover {        
 
                     -webkit-transform: scale(1.1);
