@@ -5,14 +5,18 @@ import ReactHashtag from "@mdnm/react-hashtag";
 import styled from "styled-components";
 
 import TokenContext from "../../contexts/tokenContext";
+import UserContext from "../../contexts/userContext";
 
 import defaultImage from "../../assets/images/defaultImage.jpg";
 import likeIcon from "../../assets/images/likeIcon.svg";
+import editIcon from "../../assets/images/edit.svg";
+import deleteIcon from "../../assets/images/trash.svg";
 
 export default function Post({ data }) {
   const [metadata, setMetadata] = useState(null);
   const navigate = useNavigate();
   const { token } = useContext(TokenContext);
+  const { userData } = useContext(UserContext);
 
   const API = "https://linkr-back-brenoqn2.herokuapp.com";
   // const API = "http://localhost:4000";
@@ -39,6 +43,27 @@ export default function Post({ data }) {
     navigate(`/users/${data.userId}`);
   }
 
+  function editPost() {
+    //TODO
+  }
+
+  function deletePost() {
+    //TODO
+  }
+
+  function isPostFromUser() {
+    if (data.userId === userData.id) {
+        return (
+            <Options>
+                <img src={editIcon} alt="Edit" onClick={editPost}/>
+                <img src={deleteIcon} alt="Delete" onClick={deletePost}/>
+            </Options>
+            )
+    }
+  }
+
+  const postOptions = isPostFromUser();
+
   return (
     <PostItem>
       <Container>
@@ -50,9 +75,12 @@ export default function Post({ data }) {
       </Container>
 
       <Container>
-        <UserName onClick={() => navigate(`users/${data.userId}`)}>
-          {data.username}
-        </UserName>
+        <Head>
+            <UserName onClick={() => navigate(`users/${data.userId}`)}>
+              {data.username}
+            </UserName>
+            {postOptions}
+        </Head>
 
         <Desc>
           <ReactHashtag
@@ -113,6 +141,13 @@ const Container = styled.div`
     justify-content: space-between;
   }
 `;
+
+const Head = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+`
 
 const Hashtag = styled.p`
   display: inline;
@@ -198,3 +233,14 @@ const Like = styled.div`
     color: #fff;
   }
 `;
+
+const Options = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 10px;
+
+    img {
+        width: 14px;
+    }
+`

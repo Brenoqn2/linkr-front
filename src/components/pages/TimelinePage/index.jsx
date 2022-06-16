@@ -50,7 +50,6 @@ export default function TimelinePage() {
       axios
         .get(`${API}/posts`, config)
         .then((response) => {
-            console.log('ENTROU NO THEN')
           setPosts(response.data);
         })
         .catch((err) => console.log(err))

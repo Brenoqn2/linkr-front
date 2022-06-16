@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState, useContext } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -16,7 +16,7 @@ export default function CreatePost({updatePosts}) {
     loading: false,
   });
   const { token } = useContext(TokenContext);
-  const { userData, setUserData } = useContext(UserContext);
+  const { userData } = useContext(UserContext);
 
   const API = "https://linkr-back-brenoqn2.herokuapp.com";
 
