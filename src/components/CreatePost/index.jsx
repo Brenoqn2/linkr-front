@@ -8,7 +8,7 @@ import UserContext from "../../contexts/userContext";
 
 import defaultImage from "../../assets/images/defaultImage.jpg";
 
-export default function CreatePost() {
+export default function CreatePost({updatePosts}) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     link: "",
@@ -42,9 +42,6 @@ export default function CreatePost() {
       },
     };
 
-    console.log(token);
-    console.log(config);
-
     axios
       .post(
         `${API}/post`,
@@ -55,14 +52,14 @@ export default function CreatePost() {
         config
       )
       .then((res) => {
-        console.log(res);
+        updatePosts();
         navigate("/timeline");
       })
       .catch((e) => {
         alert("Houve um erro ao publicar seu link");
         console.log(`ops !\n\n${e.response.data}`);
-        setFormData({ ...formData, loading: false });
-      });
+      })
+      .finally(() => setFormData({...formData, loading: false}));
   }
 
   return (

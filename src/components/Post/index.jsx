@@ -29,7 +29,7 @@ export default function Post({ data }) {
         setMetadata(response.data);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [data]);
 
   function addDefaultImg(e) {
     e.target.src = defaultImage;

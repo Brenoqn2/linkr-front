@@ -19,26 +19,43 @@ export default function TimelinePage() {
   const API = "https://linkr-back-brenoqn2.herokuapp.com";
   // const API = "http://localhost:4000";
 
-  useEffect(() => {
+  function getUserData() {
     const config = {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    };
-
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      };
+  
     axios.get(`${API}/user`, config).then((response) => {
-      console.log(response);
-      setUserData({ ...response.data });
+        console.log()
+        setUserData({ ...response.data });
     });
+  }
 
-    axios
-      .get(`${API}/posts`, config)
-      .then((response) => {
-        setPosts(response.data);
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setLoading(false));
-  }, []);
+  function getPosts() {
+    setLoading(true);
+    console.log('EXECUTOU AQUI')
+    const config = {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      };
+  
+      axios
+        .get(`${API}/posts`, config)
+        .then((response) => {
+            console.log('ENTROU NO THEN')
+          setPosts(response.data);
+        })
+        .catch((err) => console.log(err))
+        .finally(() => setLoading(false));
+  }
+  
+
+  useEffect(() => {
+    getUserData();
+    getPosts();
+}, []);
 
   const postsList = posts ? (
     <PostsList posts={posts}></PostsList>
@@ -59,7 +76,7 @@ export default function TimelinePage() {
         <h1>timeline</h1>
         <Content>
           <PostsContent>
-            <CreatePost />
+            <CreatePost updatePosts={getPosts} />
             {loading ? loadingElement : postsList}
           </PostsContent>
           <TrendingsContent></TrendingsContent>
