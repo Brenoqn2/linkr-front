@@ -183,7 +183,7 @@ const LinkSnippet = styled.div`
   justify-content: space-between;
 
   img {
-    width: 154px;
+    min-width: 154px;
     height: 155px;
     border-radius: 0 11px 11px 0;
 
@@ -242,5 +242,10 @@ const Options = styled.div`
 
     img {
         width: 14px;
+    }
+
+    img:hover {
+        transform: translate(1px, -1px);
+        transition: all .5s ease;
     }
 `

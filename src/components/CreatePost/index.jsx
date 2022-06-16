@@ -59,7 +59,7 @@ export default function CreatePost({updatePosts}) {
         alert("Houve um erro ao publicar seu link");
         console.log(`ops !\n\n${e.response.data}`);
       })
-      .finally(() => setFormData({...formData, loading: false}));
+      .finally(() => setFormData({link: "", content: "", loading: false}));
   }
 
   return (
