@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
 
@@ -11,6 +12,7 @@ import Header from "../../Header";
 import CreatePost from "../../CreatePost";
 
 export default function TimelinePage() {
+  const navigate = useNavigate();
   const [posts, setPosts] = useState(null);
   const [loading, setLoading] = useState(true);
   const { token } = useContext(TokenContext);
@@ -26,15 +28,19 @@ export default function TimelinePage() {
         },
       };
   
-    axios.get(`${API}/user`, config).then((response) => {
-        console.log()
+    axios.get(`${API}/user`, config)
+    .then((response) => {
         setUserData({ ...response.data });
-    });
+        getPosts();
+    }).catch(err => {
+        console.log(err);
+        alert('Session expired, log in to continue');
+        navigate('/');
+    })
   }
 
   function getPosts() {
     setLoading(true);
-    console.log('EXECUTOU AQUI')
     const config = {
         headers: {
           authorization: `Bearer ${token}`,
@@ -54,7 +60,6 @@ export default function TimelinePage() {
 
   useEffect(() => {
     getUserData();
-    getPosts();
 }, []);
 
   const postsList = posts ? (
@@ -65,9 +70,11 @@ export default function TimelinePage() {
 
   const loadingElement = (
     <LoadingContainer>
-      <ThreeDots width={100} color={"#fff"} />
+      <span>Loading </span>
+      <ThreeDots width={30} height={10} color={"#fff"} />
     </LoadingContainer>
   );
+
   return (
     <TimelineContainer>
       <Header profilePic={userData?.picture} username={userData?.username} />
@@ -104,9 +111,50 @@ const TimelineContainer = styled.main`
 
 const LoadingContainer = styled.div`
   display: flex;
-  flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
+  column-gap: 10px;
+  width: 100px;
+  height: 40px;
+  margin: 0 auto;
+
+  span {
+    font-size: 30px;
+    font-weight: bold;
+    opacity: .8;
+    color: #fff;
+  }
+
+  svg {
+    margin-bottom: 1px;
+  }
+
+  span, svg {
+    animation-name: pulse;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    animation-delay: 0s;
+    animation-direction: forwards;
+    animation-play-state: running;
+  }
+
+  @keyframes pulse {
+    0% {
+        color: #fff;
+        fill: #fff;
+    }
+
+    50% {
+        color: #929191;
+        fill: #929191;
+    }
+
+    100% {
+        color: #fff;
+        fill: #fff;
+    }
+  }
 `;
 
 const NoContent = styled.div`

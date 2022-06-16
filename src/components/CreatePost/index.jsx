@@ -109,7 +109,7 @@ const PostCreator = styled.form`
   margin-bottom: 30px;
   padding: 20px 20px;
   word-break: break-all;
-
+  column-gap: 15px;
   display: flex;
 
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -187,9 +187,8 @@ const Button = styled.div`
 `;
 
 const UserPicture = styled.div`
-  width: 50px;
+  min-width: 50px;
   height: 50px;
-  margin-right: 16px;
   border-radius: 50%;
 
   background-image: url(${(props) => (props.url ? props.url : defaultImage)});
