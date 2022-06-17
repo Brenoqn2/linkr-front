@@ -3,7 +3,7 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import TokenContext from "../../contexts/tokenContext";
+import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 import UserContext from "../../contexts/userContext";
 
 import defaultImage from "../../assets/images/defaultImage.jpg";
@@ -17,8 +17,9 @@ export default function CreatePost({updatePosts}) {
     content: "",
     loading: false,
   });
-  const { token } = useContext(TokenContext);
+  
   const { userData } = useContext(UserContext);
+  const header = GetTokenAndHeaders("headers");
 
   function disabledInput() {
     return (
@@ -36,12 +37,6 @@ export default function CreatePost({updatePosts}) {
   function handleSubmit(e) {
     e.preventDefault();
     setFormData({ ...formData, loading: true });
-    const header = {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    };
-
     axios
       .post(
         `${config.API}/post`,

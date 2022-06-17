@@ -4,12 +4,15 @@ import { useNavigate } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
 
-import TokenContext from "../../../contexts/tokenContext";
+import GetTokenAndHeaders from "../../Resources/GetTokenAndHeaders";
 import UserContext from "../../../contexts/userContext";
+import TokenContext from "../../../contexts/tokenContext";
 
 import PostsList from "../../PostsList";
 import Header from "../../Header";
 import CreatePost from "../../CreatePost";
+
+import TrendingHashtags from "../HashtagPage/trendingHashtags";
 
 import config from "../../../config/config.json";
 
@@ -17,48 +20,40 @@ export default function TimelinePage() {
   const navigate = useNavigate();
   const [posts, setPosts] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { token } = useContext(TokenContext);
   const { userData, setUserData } = useContext(UserContext);
+  const { setToken } = useContext(TokenContext);
+  const header = GetTokenAndHeaders("headers");
 
   function getUserData() {
-    const header = {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      };
-  
-    axios.get(`${config.API}/user`, header)
-    .then((response) => {
+    axios
+      .get(`${config.API}/user`, header)
+      .then((response) => {
         setUserData({ ...response.data });
         getPosts();
-    }).catch(err => {
+      })
+      .catch((err) => {
         console.log(err);
-        alert('Session expired, log in to continue');
-        navigate('/');
-    })
+        alert("Session expired, log in to continue");
+        setToken("");
+        navigate("/");
+      });
   }
 
   function getPosts() {
     setLoading(true);
-    const header = {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      };
-  
-      axios
-        .get(`${config.API}/posts`, header)
-        .then((response) => {
-          setPosts(response.data);
-        })
-        .catch((err) => console.log(err))
-        .finally(() => setLoading(false));
+    axios
+      .get(`${config.API}/posts`, header)
+      .then((response) => {
+        setPosts(response.data);
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
   }
 
   useEffect(() => {
     getUserData();
     // eslint-disable-next-line
-}, []);
+  }, []);
 
   const postsList = posts?.length ? (
     <PostsList posts={posts}></PostsList>
@@ -84,7 +79,7 @@ export default function TimelinePage() {
             <CreatePost updatePosts={getPosts} />
             {loading ? loadingElement : postsList}
           </PostsContent>
-          <TrendingsContent></TrendingsContent>
+          <TrendingHashtags />
         </Content>
       </Main>
     </TimelineContainer>
@@ -119,7 +114,7 @@ const LoadingContainer = styled.div`
   span {
     font-size: 30px;
     font-weight: bold;
-    opacity: .8;
+    opacity: 0.8;
     color: #fff;
   }
 
@@ -127,7 +122,8 @@ const LoadingContainer = styled.div`
     margin-bottom: 1px;
   }
 
-  span, svg {
+  span,
+  svg {
     animation-name: pulse;
     animation-duration: 3s;
     animation-iteration-count: infinite;
@@ -139,18 +135,18 @@ const LoadingContainer = styled.div`
 
   @keyframes pulse {
     0% {
-        color: #fff;
-        fill: #fff;
+      color: #fff;
+      fill: #fff;
     }
 
     50% {
-        color: #929191;
-        fill: #929191;
+      color: #929191;
+      fill: #929191;
     }
 
     100% {
-        color: #fff;
-        fill: #fff;
+      color: #fff;
+      fill: #fff;
     }
   }
 `;
@@ -177,7 +173,7 @@ const Main = styled.div`
     width: 100%;
 
     h1 {
-        padding-left: 20px;
+      padding-left: 20px;
     }
   }
 `;
