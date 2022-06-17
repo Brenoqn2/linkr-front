@@ -8,6 +8,8 @@ import UserContext from "../../contexts/userContext";
 
 import defaultImage from "../../assets/images/defaultImage.jpg";
 
+import config from "../../config/config.json";
+
 export default function CreatePost({updatePosts}) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -17,9 +19,6 @@ export default function CreatePost({updatePosts}) {
   });
   const { token } = useContext(TokenContext);
   const { userData } = useContext(UserContext);
-
-  const API = "https://linkr-back-brenoqn2.herokuapp.com";
-  // const API = "http://localhost:4000";
 
   function disabledInput() {
     return (
@@ -37,7 +36,7 @@ export default function CreatePost({updatePosts}) {
   function handleSubmit(e) {
     e.preventDefault();
     setFormData({ ...formData, loading: true });
-    const config = {
+    const header = {
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -45,12 +44,12 @@ export default function CreatePost({updatePosts}) {
 
     axios
       .post(
-        `${API}/post`,
+        `${config.API}/post`,
         {
           link: formData.link,
           content: formData.content,
         },
-        config
+        header
       )
       .then((res) => {
         updatePosts();

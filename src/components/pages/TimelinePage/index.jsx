@@ -11,6 +11,8 @@ import PostsList from "../../PostsList";
 import Header from "../../Header";
 import CreatePost from "../../CreatePost";
 
+import config from "../../../config/config.json";
+
 export default function TimelinePage() {
   const navigate = useNavigate();
   const [posts, setPosts] = useState(null);
@@ -18,17 +20,14 @@ export default function TimelinePage() {
   const { token } = useContext(TokenContext);
   const { userData, setUserData } = useContext(UserContext);
 
-  const API = "https://linkr-back-brenoqn2.herokuapp.com";
-  // const API = "http://localhost:4000";
-
   function getUserData() {
-    const config = {
+    const header = {
         headers: {
           authorization: `Bearer ${token}`,
         },
       };
   
-    axios.get(`${API}/user`, config)
+    axios.get(`${config.API}/user`, header)
     .then((response) => {
         setUserData({ ...response.data });
         getPosts();
@@ -41,14 +40,14 @@ export default function TimelinePage() {
 
   function getPosts() {
     setLoading(true);
-    const config = {
+    const header = {
         headers: {
           authorization: `Bearer ${token}`,
         },
       };
   
       axios
-        .get(`${API}/posts`, config)
+        .get(`${config.API}/posts`, header)
         .then((response) => {
           setPosts(response.data);
         })

@@ -1,5 +1,7 @@
 import axios from "axios";
 
+import config from "../../config/config.json";
+
 export default function ChooseAvatar(e, token) {
 
     let max_size = 70000; // 70kb
@@ -9,15 +11,13 @@ export default function ChooseAvatar(e, token) {
     if (file.size > max_size) return alert('File is too big!\nMax size is 70kb');
     reader.onload = function () {
 
-        const config = {
+        const header = {
             headers: {
                 authorization: `Bearer ${token}`,
             },
         };
-
-        const API = 'https://linkr-back-brenoqn2.herokuapp.com/'
-
-        axios.put(`${API}change/avatar`, { avatar: reader.result }, config)
+        
+        axios.put(`${config.API}/change/avatar`, { avatar: reader.result }, header)
             .then(res => {
                 alert('Avatar changed successfully!');
                 window.location.reload();
