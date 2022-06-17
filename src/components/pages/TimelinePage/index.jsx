@@ -6,6 +6,7 @@ import styled from "styled-components";
 
 import GetTokenAndHeaders from "../../Resources/GetTokenAndHeaders";
 import UserContext from "../../../contexts/userContext";
+import TokenContext from "../../../contexts/tokenContext";
 
 import PostsList from "../../PostsList";
 import Header from "../../Header";
@@ -20,6 +21,7 @@ export default function TimelinePage() {
   const [posts, setPosts] = useState(null);
   const [loading, setLoading] = useState(true);
   const { userData, setUserData } = useContext(UserContext);
+  const { setToken } = useContext(TokenContext);
   const header = GetTokenAndHeaders("headers");
 
   function getUserData() {
@@ -32,6 +34,7 @@ export default function TimelinePage() {
       .catch((err) => {
         console.log(err);
         alert("Session expired, log in to continue");
+        setToken("");
         navigate("/");
       });
   }

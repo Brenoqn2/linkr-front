@@ -7,6 +7,7 @@ import TrendingHashtags from "./trendingHashtags";
 
 import GetTokenAndHeaders from "../../Resources/GetTokenAndHeaders";
 import UserContext from "../../../contexts/userContext";
+import TokenContext from "../../../contexts/tokenContext";
 
 import PostsList from "../../PostsList";
 import Header from "../../Header";
@@ -18,6 +19,7 @@ export default function HashtagPage() {
   const [loading, setLoading] = useState(true);
 
   const { userData, setUserData } = useContext(UserContext);
+  const { setToken } = useContext(TokenContext);
   const { hashtag } = useParams();
   const header = GetTokenAndHeaders("headers");
 
@@ -31,6 +33,7 @@ export default function HashtagPage() {
       .catch((err) => {
         console.log(err);
         alert("Session expired, log in to continue");
+        setToken("");
         navigate("/");
       });
   }
