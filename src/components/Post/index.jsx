@@ -180,11 +180,13 @@ const Head = styled.div`
 const Hashtag = styled.p`
   display: inline;
   color: #fff;
+  cursor: pointer;
 `;
 
 const UserName = styled.h2`
   font-size: 19px;
   color: #fff;
+  cursor: pointer;
 `;
 
 const UserPicture = styled.div`
@@ -194,6 +196,7 @@ const UserPicture = styled.div`
   border-radius: 50%;
   background-image: url(${(props) => (props.url ? props.url : defaultImage)});
   background-size: contain;
+  cursor: pointer;
 `;
 
 const Desc = styled.p`
@@ -210,7 +213,7 @@ const LinkSnippet = styled.div`
   display: flex;
   justify-content: space-between;
   column-gap: 10px;
-
+  cursor: pointer;
 
   img {
     min-width: 154px;
