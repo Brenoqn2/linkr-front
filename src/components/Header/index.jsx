@@ -2,20 +2,23 @@ import styled from "styled-components"
 
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useState } from "react";
+import { useState, useContext } from "react";
 
 import logo from "../../assets/images/Logo.svg";
 import arrow from "../../assets/images/arrow.svg";
 import ChooseAvatar from "../Resources/ChooseAvatar";
 
-import { useContext, useEffect } from "react";
 import TokenContext from "../../contexts/tokenContext";
+
+import config from "../../config/config.json";
+import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 
 export default function Header({ profilePic, username }) {
 
     const navigate = useNavigate();
-    const { token, setToken } = useContext(TokenContext);
+    const { setToken } = useContext(TokenContext);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const token = GetTokenAndHeaders("token");
 
     function toggleMenu() {
         setIsMenuOpen(!isMenuOpen)
@@ -23,9 +26,7 @@ export default function Header({ profilePic, username }) {
 
     function Logout() {
 
-        const API = 'https://linkr-back-brenoqn2.herokuapp.com/'
-
-        axios.post(`${API}logout`, {}, { headers: { authorization: `Bearer ${token}` } })
+        axios.post(`${config.API}/logout`, {}, { headers: { authorization: `Bearer ${token}` } })
             .then(res => {
                 setToken('');
                 navigate('/');
