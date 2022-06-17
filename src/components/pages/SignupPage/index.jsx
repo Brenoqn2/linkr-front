@@ -8,9 +8,10 @@ import ValidateThisEmailAndPass from "../../Resources/ValidateEmailAndPass";
 import Loader from "../../Resources/Loader";
 import GetAvatar from "../../Resources/GetAvatar";
 
+import config from "../../../config/config.json";
+
 export default function LoginPage() {
 
-    const API = 'https://linkr-back-brenoqn2.herokuapp.com/'
     const navigate = useNavigate();
     const [data, setData] = useState({ name: null, email: null, password: null, confirmPassword: null, avatar: null });
     const [loading, setLoading] = useState(false);
@@ -35,7 +36,7 @@ export default function LoginPage() {
                 avatar: data.avatar ? data.avatar : 'https://i.imgur.com/62ufJYt.jpeg'
             };
 
-            axios.post(API + 'signup', userData)
+            axios.post(config.API + '/signup', userData)
                 .then(res => navigate('/'))
                 .catch(err => {
                     alert(`ops !\n\n${err.response.data}`);
