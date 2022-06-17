@@ -60,7 +60,7 @@ export default function TimelinePage() {
     // eslint-disable-next-line
 }, []);
 
-  const postsList = posts ? (
+  const postsList = posts?.length ? (
     <PostsList posts={posts}></PostsList>
   ) : (
     <NoContent>There are no posts yet</NoContent>
@@ -156,6 +156,7 @@ const LoadingContainer = styled.div`
 `;
 
 const NoContent = styled.div`
+  margin: 0 auto;
   display: flex;
   justify-content: center;
   align-items: center;
