@@ -5,7 +5,7 @@ import { useViewportWidth } from "../../hooks/useViewportWidth";
 import ReactHashtag from "@mdnm/react-hashtag";
 import styled from "styled-components";
 
-import TokenContext from "../../contexts/tokenContext";
+import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 import UserContext from "../../contexts/userContext";
 
 import defaultImage from "../../assets/images/defaultImage.jpg";
@@ -18,18 +18,14 @@ import config from "../../config/config.json";
 export default function Post({ data }) {
   const [metadata, setMetadata] = useState(null);
   const navigate = useNavigate();
-  const { token } = useContext(TokenContext);
   const { userData } = useContext(UserContext);
   const screenWidth = useViewportWidth();
+  const header = GetTokenAndHeaders("headers");
 
   // busca os metadados do link
   useEffect(() => {
     axios
-      .get(`${config.API}/posts/${data.id}/metadata`, {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      })
+      .get(`${config.API}/posts/${data.id}/metadata`, header)
       .then((response) => {
         setMetadata(response.data);
       })
