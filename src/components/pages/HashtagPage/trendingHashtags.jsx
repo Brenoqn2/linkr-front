@@ -33,7 +33,10 @@ export default function TrendingHashtags() {
         <Title>trending</Title>
         <Division />
         {hashtags.map((hashtag) => (
-          <HashtagContainer key={hashtag.name}>
+          <HashtagContainer
+            key={hashtag.name}
+            onClick={() => navigate(`/hashtag/${hashtag.name}`)}
+          >
             #{hashtag.name}
           </HashtagContainer>
         ))}
@@ -83,4 +86,5 @@ const HashtagContainer = styled.div`
   line-height: 23px;
   letter-spacing: 0.05em;
   color: #ffffff;
+  cursor: pointer;
 `;
