@@ -19,16 +19,13 @@ import ResetCSS from "../../assets/styles/ResetCSS";
 export default function App() {
   const [token, setToken] = useLocalStorage("token", null);
   const [userData, setUserData] = useLocalStorage("userData", null);
-  const [hashtag, setHashtag] = useState();
 
   return (
     <BrowserRouter>
       <ResetCSS />
       <GlobalStyle />
       <TokenContext.Provider value={{ token, setToken }}>
-        <UserContext.Provider
-          value={{ userData, setUserData, hashtag, setHashtag }}
-        >
+        <UserContext.Provider value={{ userData, setUserData }}>
           <Routes>
             <Route path="/" element={<LoginPage />} />
             <Route path="/sign-up" element={<SignupPage />} />
