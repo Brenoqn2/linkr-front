@@ -9,9 +9,10 @@ import TitleAuthentication from "../../Resources/StyleTitleAuthentication.jsx";
 import ValidateThisEmailAndPass from "../../Resources/ValidateEmailAndPass";
 import Loader from "../../Resources/Loader";
 
+import config from "../../../config/config.json";
+
 export default function LoginPage() {
 
-    const API = 'https://linkr-back-brenoqn2.herokuapp.com/'
     const navigate = useNavigate();
     const [data, setData] = useState({ email: null, password: null});
     const [loading, setLoading] = useState(false);
@@ -24,7 +25,7 @@ export default function LoginPage() {
 
         if (ValidateThisEmailAndPass(data.email, data.password)) {
 
-            axios.post(API + 'signin', { email: data.email, password: data.password }).then(res => {
+            axios.post(config.API + '/signin', { email: data.email, password: data.password }).then(res => {
                 setToken(res.data.token);
                 navigate('/timeline');
             }).catch(err => {

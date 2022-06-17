@@ -8,8 +8,10 @@ import logo from "../../assets/images/Logo.svg";
 import arrow from "../../assets/images/arrow.svg";
 import ChooseAvatar from "../Resources/ChooseAvatar";
 
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import TokenContext from "../../contexts/tokenContext";
+
+import config from "../../config/config.json";
 
 export default function Header({ profilePic, username }) {
 
@@ -23,9 +25,7 @@ export default function Header({ profilePic, username }) {
 
     function Logout() {
 
-        const API = 'https://linkr-back-brenoqn2.herokuapp.com/'
-
-        axios.post(`${API}logout`, {}, { headers: { authorization: `Bearer ${token}` } })
+        axios.post(`${config.API}/logout`, {}, { headers: { authorization: `Bearer ${token}` } })
             .then(res => {
                 setToken('');
                 navigate('/');

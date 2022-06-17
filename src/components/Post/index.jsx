@@ -13,6 +13,8 @@ import likeIcon from "../../assets/images/likeIcon.svg";
 import editIcon from "../../assets/images/edit.svg";
 import deleteIcon from "../../assets/images/trash.svg";
 
+import config from "../../config/config.json";
+
 export default function Post({ data }) {
   const [metadata, setMetadata] = useState(null);
   const navigate = useNavigate();
@@ -20,13 +22,10 @@ export default function Post({ data }) {
   const { userData } = useContext(UserContext);
   const screenWidth = useViewportWidth();
 
-  const API = "https://linkr-back-brenoqn2.herokuapp.com";
-  // const API = "http://localhost:4000";
-
   // busca os metadados do link
   useEffect(() => {
     axios
-      .get(`${API}/posts/${data.id}/metadata`, {
+      .get(`${config.API}/posts/${data.id}/metadata`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
