@@ -1,32 +1,48 @@
 import styled from "styled-components"
 
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { useState } from "react";
 
 import logo from "../../assets/images/Logo.svg";
 import arrow from "../../assets/images/arrow.svg";
-import Logout from "../Resources/Logout";
 import ChooseAvatar from "../Resources/ChooseAvatar";
 
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import TokenContext from "../../contexts/tokenContext";
 
-export default function Header({profilePic, username}) {
+export default function Header({ profilePic, username }) {
 
-    const { token } = useContext(TokenContext);
+    const navigate = useNavigate();
+    const { token, setToken } = useContext(TokenContext);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     function toggleMenu() {
         setIsMenuOpen(!isMenuOpen)
     }
 
+    function Logout() {
+
+        const API = 'https://linkr-back-brenoqn2.herokuapp.com/'
+
+        axios.post(`${API}logout`, {}, { headers: { authorization: `Bearer ${token}` } })
+            .then(res => {
+                setToken('');
+                navigate('/');
+                alert('bye bye!');
+            }).catch(err => {
+                alert('Logout not completed!');
+            });
+    }
+
     const menuCSS = isMenuOpen ? 'open' : 'close';
 
     return (
-        <>    
+        <>
             <HeaderContainer>
                 <img src={logo} alt="LINKR" />
                 <Container>
-                    <img src={arrow} alt="menu" onClick={toggleMenu} className={menuCSS}/>
+                    <img src={arrow} alt="menu" onClick={toggleMenu} className={menuCSS} />
                     <img src={profilePic} alt={`${username} profile`} />
                 </Container>
             </HeaderContainer>
@@ -34,7 +50,7 @@ export default function Header({profilePic, username}) {
                 <div className="content">
                     <button><label htmlFor="change_avatar">Choose Avatar</label></button>
                     <input type="file" id="change_avatar" hidden accept=".png, .jpg, .jpeg"
-                            onChange={e => ChooseAvatar(e.target.value, token)} />
+                        onChange={e => ChooseAvatar(e.target.value, token)} />
                     <button onClick={Logout}>Logout</button>
                 </div>
             </Menu>
