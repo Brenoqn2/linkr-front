@@ -58,6 +58,7 @@ export default function TimelinePage() {
 
   useEffect(() => {
     getUserData();
+    // eslint-disable-next-line
 }, []);
 
   const postsList = posts ? (
