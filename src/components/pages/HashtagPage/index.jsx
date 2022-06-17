@@ -4,31 +4,25 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
 
-import TokenContext from "../../../contexts/tokenContext";
+import GetTokenAndHeaders from "../../Resources/GetTokenAndHeaders";
 import UserContext from "../../../contexts/userContext";
 
 import PostsList from "../../PostsList";
 import Header from "../../Header";
+import config from "../../../config/config.json";
 
 export default function HashtagPage() {
   const navigate = useNavigate();
   const [posts, setPosts] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { token } = useContext(TokenContext);
+
   const { userData, setUserData } = useContext(UserContext);
   const { hashtag } = useParams();
-
-  const API = "https://linkr-back-brenoqn2.herokuapp.com";
-//   const API = "http://localhost:4000";
+  const header = GetTokenAndHeaders("headers");
 
   function getUserData() {
-    const config = {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      };
   
-    axios.get(`${API}/user`, config)
+    axios.get(`${config.API}/user`, header)
     .then((response) => {
         setUserData({ ...response.data });
         getPosts();
@@ -41,14 +35,9 @@ export default function HashtagPage() {
 
   function getPosts() {
     setLoading(true);
-    const config = {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      };
-  
+    
       axios
-        .get(`${API}/hashtag/${hashtag}`, config)
+        .get(`${config.API}/hashtag/${hashtag}`, header)
         .then((response) => {
           setPosts(response.data);
         })

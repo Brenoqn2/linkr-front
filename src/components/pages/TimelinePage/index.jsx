@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
 
-import TokenContext from "../../../contexts/tokenContext";
+import GetTokenAndHeaders from "../../Resources/GetTokenAndHeaders";
 import UserContext from "../../../contexts/userContext";
 
 import PostsList from "../../PostsList";
@@ -17,16 +17,10 @@ export default function TimelinePage() {
   const navigate = useNavigate();
   const [posts, setPosts] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { token } = useContext(TokenContext);
   const { userData, setUserData } = useContext(UserContext);
+  const header = GetTokenAndHeaders("headers");
 
   function getUserData() {
-    const header = {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      };
-  
     axios.get(`${config.API}/user`, header)
     .then((response) => {
         setUserData({ ...response.data });
@@ -39,13 +33,7 @@ export default function TimelinePage() {
   }
 
   function getPosts() {
-    setLoading(true);
-    const header = {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      };
-  
+    setLoading(true);  
       axios
         .get(`${config.API}/posts`, header)
         .then((response) => {
