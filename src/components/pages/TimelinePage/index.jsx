@@ -56,7 +56,7 @@ export default function TimelinePage() {
   }, []);
 
   const postsList = posts?.length ? (
-    <PostsList posts={posts}></PostsList>
+    <PostsList posts={posts} updatePosts={getPosts}></PostsList>
   ) : (
     <NoContent>There are no posts yet</NoContent>
   );

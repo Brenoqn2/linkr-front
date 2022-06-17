@@ -15,7 +15,7 @@ import deleteIcon from "../../assets/images/trash.svg";
 
 import config from "../../config/config.json";
 
-export default function Post({ data }) {
+export default function Post({ data, updatePosts }) {
   const [metadata, setMetadata] = useState(null);
   const navigate = useNavigate();
   const { userData } = useContext(UserContext);
@@ -42,12 +42,13 @@ export default function Post({ data }) {
 
   function shortenText(text, charsMax) {
     let shortenText = text.split(/[\s,.]+/);
-    if(shortenText.length >= charsMax) {
-        shortenText.splice(charsMax);
-        shortenText = shortenText.join(' ');
+    if (shortenText.length >= charsMax) {
+      shortenText.splice(charsMax);
+      shortenText = shortenText.join(" ");
 
-        if(shortenText[shortenText.length - 1] === '.') shortenText = shortenText.slice(0, -1);
-        return shortenText + '...';
+      if (shortenText[shortenText.length - 1] === ".")
+        shortenText = shortenText.slice(0, -1);
+      return shortenText + "...";
     }
     return text;
   }
@@ -56,18 +57,28 @@ export default function Post({ data }) {
     //TODO
   }
 
-  function deletePost() {
-    //TODO
+  function deletePost(e) {
+    e.preventDefault();
+    updatePosts();
+    axios
+      .delete(`${config.API}/post/${data.id}`, header)
+      .then((res) => {
+        updatePosts();
+      })
+      .catch((e) => {
+        alert("Houve um erro ao deletar seu post");
+        console.log(`ops !\n\n${e.response.data}`);
+      });
   }
 
   function postOptionsBuilder() {
     if (data.userId === userData.id) {
-        return (
-            <Options>
-                <img src={editIcon} alt="Edit" onClick={editPost}/>
-                <img src={deleteIcon} alt="Delete" onClick={deletePost}/>
-            </Options>
-            )
+      return (
+        <Options>
+          <img src={editIcon} alt="Edit" onClick={editPost} />
+          <img src={deleteIcon} alt="Delete" onClick={deletePost} />
+        </Options>
+      );
     }
   }
 
@@ -85,10 +96,10 @@ export default function Post({ data }) {
 
       <Container>
         <Head>
-            <UserName onClick={() => navigate(`users/${data.userId}`)}>
-              {data.username}
-            </UserName>
-            {postOptions}
+          <UserName onClick={() => navigate(`users/${data.userId}`)}>
+            {data.username}
+          </UserName>
+          {postOptions}
         </Head>
 
         <Desc>
@@ -104,8 +115,16 @@ export default function Post({ data }) {
         </Desc>
         <LinkSnippet onClick={() => window.open(data.link, "_blank")}>
           <div>
-            <h2>{metadata?.title && screenWidth <= 600 ? shortenText(metadata?.title, 5) : metadata?.title}</h2>
-            <p>{metadata?.description && screenWidth <= 600 ? shortenText(metadata?.description, 10) : metadata?.description}</p>
+            <h2>
+              {metadata?.title && screenWidth <= 600
+                ? shortenText(metadata?.title, 5)
+                : metadata?.title}
+            </h2>
+            <p>
+              {metadata?.description && screenWidth <= 600
+                ? shortenText(metadata?.description, 10)
+                : metadata?.description}
+            </p>
             <span>{metadata?.url}</span>
           </div>
           <img
@@ -161,17 +180,17 @@ const Container = styled.div`
 
   @media (max-width: 640px) {
     &:last-child {
-        width: 100%;
+      width: 100%;
     }
   }
 `;
 
 const Head = styled.div`
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
 
 const Hashtag = styled.p`
   display: inline;
@@ -206,7 +225,6 @@ const LinkSnippet = styled.div`
   display: flex;
   justify-content: space-between;
   column-gap: 10px;
-
 
   img {
     min-width: 154px;
@@ -252,33 +270,31 @@ const LinkSnippet = styled.div`
   @media (max-width: 640px) {
     height: 115px;
     width: 100%;
-    
+
     img {
-        min-width: 95px;
-        max-width: 95px;
-        height: 115px;
+      min-width: 95px;
+      max-width: 95px;
+      height: 115px;
     }
 
     p {
-        text-overflow: ellipsis;
-        white-space: normal;
-        font-size: 9px;
+      text-overflow: ellipsis;
+      white-space: normal;
+      font-size: 9px;
     }
-    
+
     span {
-        font-size: 9px;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-        max-width: 150px;
+      font-size: 9px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      max-width: 150px;
     }
 
     h2 {
-        font-size: 11px;
+      font-size: 11px;
     }
-
   }
-
 `;
 
 const Like = styled.div`
@@ -299,17 +315,17 @@ const Like = styled.div`
 `;
 
 const Options = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    column-gap: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 10px;
 
-    img {
-        width: 14px;
-    }
+  img {
+    width: 14px;
+  }
 
-    img:hover {
-        transform: translate(1px, -1px);
-        transition: all .5s ease;
-    }
-`
+  img:hover {
+    transform: translate(1px, -1px);
+    transition: all 0.5s ease;
+  }
+`;

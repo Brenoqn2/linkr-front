@@ -10,14 +10,14 @@ import defaultImage from "../../assets/images/defaultImage.jpg";
 
 import config from "../../config/config.json";
 
-export default function CreatePost({updatePosts}) {
+export default function CreatePost({ updatePosts }) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     link: "",
     content: "",
     loading: false,
   });
-  
+
   const { userData } = useContext(UserContext);
   const header = GetTokenAndHeaders("headers");
 
@@ -48,13 +48,12 @@ export default function CreatePost({updatePosts}) {
       )
       .then((res) => {
         updatePosts();
-        navigate("/timeline");
       })
       .catch((e) => {
         alert("Houve um erro ao publicar seu link");
         console.log(`ops !\n\n${e.response.data}`);
       })
-      .finally(() => setFormData({link: "", content: "", loading: false}));
+      .finally(() => setFormData({ link: "", content: "", loading: false }));
   }
 
   return (
