@@ -19,6 +19,7 @@ export default function CreatePost({updatePosts}) {
   const { userData } = useContext(UserContext);
 
   const API = "https://linkr-back-brenoqn2.herokuapp.com";
+  // const API = "http://localhost:4000";
 
   function disabledInput() {
     return (
