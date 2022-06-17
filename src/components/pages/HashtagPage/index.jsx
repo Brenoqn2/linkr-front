@@ -40,21 +40,21 @@ export default function HashtagPage() {
 
   function getPosts() {
     setLoading(true);
-
-    axios
-      .get(`${config.API}/hashtag/${hashtag}`, header)
-      .then((response) => {
-        setPosts(response.data);
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setLoading(false));
+  
+      axios
+        .get(`${config.API}/hashtag/${hashtag}`, header)
+        .then((response) => {
+          setPosts(response.data);
+        })
+        .catch((err) => console.log(err))
+        .finally(() => setLoading(false));
   }
 
   useEffect(() => {
     getUserData();
   }, [hashtag]);
 
-  const postsList = posts ? (
+  const postsList = posts?.length ? (
     <PostsList posts={posts}></PostsList>
   ) : (
     <NoContent>There are no posts yet</NoContent>
@@ -188,12 +188,4 @@ const PostsContent = styled.div`
   width: 100%;
 `;
 
-const TrendingsContent = styled.div`
-  width: 301px;
-  height: 406px;
-  background-color: #171717;
-  border-radius: 16px;
-  @media (max-width: 951px) {
-    display: none;
-  }
-`;
+

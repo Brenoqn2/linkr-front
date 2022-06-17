@@ -53,6 +53,10 @@ const TrendContainer = styled.aside`
 
   background: #171717;
   border-radius: 16px;
+
+  @media (max-width: 951px) {
+    display: none;
+  }
 `;
 
 const Title = styled.h1`
