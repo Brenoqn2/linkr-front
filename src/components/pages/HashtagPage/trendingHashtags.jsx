@@ -1,25 +1,41 @@
 import styled from "styled-components";
+import { useState, useEffect, useContext } from "react";
+import TokenContext from "../../../contexts/tokenContext";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function TrendingHashtags() {
-  const hashtags = [
-    "javascript",
-    "react",
-    "react-native",
-    "material",
-    "web-dev",
-    "mobile",
-    "css",
-    "html",
-    "node",
-    "sql",
-  ];
+  const [hashtags, setHashtags] = useState([]);
+  const { token } = useContext(TokenContext);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const API = "https://linkr-back-brenoqn2.herokuapp.com";
+    const config = {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    };
+
+    axios
+      .get(`${API}/trending`, config)
+      .then((response) => {
+        setHashtags(response.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Session expired, log in to continue");
+        navigate("/");
+      });
+  });
   return (
     <>
       <TrendContainer>
         <Title>trending</Title>
         <Division />
         {hashtags.map((hashtag) => (
-          <HashtagContainer key={hashtag}>#{hashtag}</HashtagContainer>
+          <HashtagContainer key={hashtag.name}>
+            #{hashtag.name}
+          </HashtagContainer>
         ))}
       </TrendContainer>
     </>
