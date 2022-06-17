@@ -46,7 +46,7 @@ export default function TrendingHashtags() {
 }
 
 const TrendContainer = styled.aside`
-  width: 301px;
+  min-width: 301px;
   height: 406px;
   left: 877px;
   top: 232px;
