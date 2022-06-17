@@ -1,30 +1,59 @@
 import styled from "styled-components"
 
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { useState } from "react";
 
 import logo from "../../assets/images/Logo.svg";
 import arrow from "../../assets/images/arrow.svg";
+import ChooseAvatar from "../Resources/ChooseAvatar";
 
-export default function Header({profilePic, username}) {
+import { useContext, useEffect } from "react";
+import TokenContext from "../../contexts/tokenContext";
+
+export default function Header({ profilePic, username }) {
+
+    const navigate = useNavigate();
+    const { token, setToken } = useContext(TokenContext);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     function toggleMenu() {
         setIsMenuOpen(!isMenuOpen)
     }
 
+    function Logout() {
+
+        const API = 'https://linkr-back-brenoqn2.herokuapp.com/'
+
+        axios.post(`${API}logout`, {}, { headers: { authorization: `Bearer ${token}` } })
+            .then(res => {
+                setToken('');
+                navigate('/');
+                alert('bye bye!');
+            }).catch(err => {
+                alert('Logout not completed!');
+            });
+    }
 
     const menuCSS = isMenuOpen ? 'open' : 'close';
 
     return (
-        <>    
+        <>
             <HeaderContainer>
                 <img src={logo} alt="LINKR" />
                 <Container>
-                    <img src={arrow} alt="menu" onClick={toggleMenu} className={menuCSS}/>
+                    <img src={arrow} alt="menu" onClick={toggleMenu} className={menuCSS} />
                     <img src={profilePic} alt={`${username} profile`} />
                 </Container>
             </HeaderContainer>
-            <Menu className={menuCSS}>Logout</Menu>
+            <Menu className={menuCSS}>
+                <div className="content">
+                    <button><label htmlFor="change_avatar">Choose Avatar</label></button>
+                    <input type="file" id="change_avatar" hidden accept=".png, .jpg, .jpeg"
+                        onChange={e => ChooseAvatar(e.target.value, token)} />
+                    <button onClick={Logout}>Logout</button>
+                </div>
+            </Menu>
         </>
     )
 }
@@ -60,6 +89,7 @@ const Container = styled.div`
 
     img:first-child {
         width: 18px;
+        cursor: pointer;
     }
 
     img:last-child {
@@ -70,7 +100,7 @@ const Container = styled.div`
 `
 
 const Menu = styled.div`
-    height: 50px;
+    height: 75px;
     width: 150px;
     border-radius: 0px 0px 0px 20px;
     color: #fff;
@@ -96,5 +126,37 @@ const Menu = styled.div`
     &.close {
         top: 0;
         transition: all .25s ease-in-out;
+    }
+
+    .content {
+
+        width: 100%;
+        height: 100%;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        label { cursor: pointer; }
+
+        button {
+
+            margin-top: 1%;
+            width: 112px;
+            height: 31px;
+            
+            background: #1877f2;
+            border-radius: 5px;
+            border: none;
+            
+            font-weight: 700;
+            font-size: 13px;
+            line-height: 16px;
+            text-align: center;
+            color: #ffffff;
+            cursor: pointer;
+
+        }
     }
 `

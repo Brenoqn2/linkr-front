@@ -55,10 +55,10 @@ export default function TimelinePage() {
         .catch((err) => console.log(err))
         .finally(() => setLoading(false));
   }
-  
 
   useEffect(() => {
     getUserData();
+    // eslint-disable-next-line
 }, []);
 
   const postsList = posts?.length ? (
