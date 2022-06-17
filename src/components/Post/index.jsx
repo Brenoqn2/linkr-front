@@ -41,7 +41,7 @@ export default function Post({ data }) {
   }
 
   function redirectToUser() {
-    navigate(`/users/${data.userId}`);
+    navigate(`/users/${data.userId}`, {state: {username: data.username}});
   }
 
   function shortenText(text, charsMax) {
@@ -89,7 +89,7 @@ export default function Post({ data }) {
 
       <Container>
         <Head>
-            <UserName onClick={() => navigate(`users/${data.userId}`)}>
+            <UserName onClick={redirectToUser}>
               {data.username}
             </UserName>
             {postOptions}

@@ -10,6 +10,8 @@ import UserContext from "../../../contexts/userContext";
 import PostsList from "../../PostsList";
 import Header from "../../Header";
 
+import config from "../../../config/config.json";
+
 export default function HashtagPage() {
   const navigate = useNavigate();
   const [posts, setPosts] = useState(null);
@@ -18,17 +20,15 @@ export default function HashtagPage() {
   const { userData, setUserData } = useContext(UserContext);
   const { hashtag } = useParams();
 
-  const API = "https://linkr-back-brenoqn2.herokuapp.com";
-//   const API = "http://localhost:4000";
 
   function getUserData() {
-    const config = {
+    const header = {
         headers: {
           authorization: `Bearer ${token}`,
         },
       };
   
-    axios.get(`${API}/user`, config)
+    axios.get(`${config.API}/user`, header)
     .then((response) => {
         setUserData({ ...response.data });
         getPosts();
@@ -41,14 +41,14 @@ export default function HashtagPage() {
 
   function getPosts() {
     setLoading(true);
-    const config = {
+    const header = {
         headers: {
           authorization: `Bearer ${token}`,
         },
       };
   
       axios
-        .get(`${API}/hashtag/${hashtag}`, config)
+        .get(`${config.API}/hashtag/${hashtag}`, header)
         .then((response) => {
           setPosts(response.data);
         })
@@ -61,7 +61,7 @@ export default function HashtagPage() {
     getUserData();
 }, [hashtag]);
 
-  const postsList = posts ? (
+  const postsList = posts?.length ? (
     <PostsList posts={posts}></PostsList>
   ) : (
     <NoContent>There are no posts yet</NoContent>
