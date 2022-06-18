@@ -9,11 +9,12 @@ import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 import UserContext from "../../contexts/userContext";
 
 import defaultImage from "../../assets/images/defaultImage.jpg";
-import likeIcon from "../../assets/images/likeIcon.svg";
 import editIcon from "../../assets/images/edit.svg";
 import deleteIcon from "../../assets/images/trash.svg";
 
 import config from "../../config/config.json";
+
+import Like from "../Like/index";
 
 export default function Post({ data }) {
   const [metadata, setMetadata] = useState(null);
@@ -77,10 +78,7 @@ export default function Post({ data }) {
     <PostItem>
       <Container>
         <UserPicture onClick={redirectToUser} url={data.picture} />
-        <Like>
-          <img src={likeIcon} alt="Like" />
-          <span>10 likes</span>
-        </Like>
+        <Like postId={data.id}/>
       </Container>
 
       <Container>
@@ -282,23 +280,6 @@ const LinkSnippet = styled.div`
 
   }
 
-`;
-
-const Like = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  row-gap: 10px;
-
-  img {
-    width: 20px;
-  }
-
-  span {
-    font-size: 11px;
-    color: #fff;
-  }
 `;
 
 const Options = styled.div`
