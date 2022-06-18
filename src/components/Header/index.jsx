@@ -2,7 +2,10 @@ import styled from "styled-components"
 
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
+import { DebounceInput } from "react-debounce-input";
+
+import ResultItem from "../ResultItem";
 
 import TokenContext from "../../contexts/tokenContext";
 
@@ -19,14 +22,22 @@ export default function Header({ profilePic, username }) {
     const navigate = useNavigate();
     const { setToken } = useContext(TokenContext);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [ searchInput, setSearchInput ] = useState(null);
+    const [searchResult, setSearchResult ] = useState([]);
     const token = GetTokenAndHeaders("token");
+    const header = GetTokenAndHeaders("headers");
+
+    function getSearchResult() {
+        axios.get(`${config.API}/users?name=${searchInput}`, header)
+        .then(response => setSearchResult(response.data))
+        .catch(err => console.log(err));
+    }
 
     function toggleMenu() {
         setIsMenuOpen(!isMenuOpen)
     }
 
     function Logout() {
-
         axios.post(`${config.API}/logout`, {}, { headers: { authorization: `Bearer ${token}` } })
             .then(res => {
                 setToken('');
@@ -37,15 +48,33 @@ export default function Header({ profilePic, username }) {
             });
     }
 
+    
+    useEffect(() => {
+        if(!searchInput) return;
+        getSearchResult()
+    }, [searchInput]);
+    
+    const result = searchResult.map(user => <ResultItem data={user}></ResultItem>);
+
+    const searchBarCSS = searchResult?.length ? 'open' : 'close';
     const menuCSS = isMenuOpen ? 'open' : 'close';
 
     return (
         <>
             <HeaderContainer>
                 <img src={logo} alt="LINKR" id="ff" onClick={() => navigate('/timeline')}/>
-                <SearchBar>
-                    <input type="text" placeholder="Search for people"/>
+                <SearchBar className={searchBarCSS}>
+                    <DebounceInput 
+                        minLength={3}
+                        debounceTimeout={300}
+                        placeholder="Search for people"
+                        onChange={e => setSearchInput(e.target.value)}
+                        value={searchInput}
+                    />
                     <button><img src={search} alt="Search" /></button>
+                    <SearchResult>
+                        {result}
+                    </SearchResult>
                 </SearchBar>
                 <Container>
                     <img src={arrow} alt="menu" onClick={toggleMenu} className={menuCSS} />
@@ -77,7 +106,6 @@ const HeaderContainer = styled.header`
     position: fixed;
     top: 0;
     z-index: 2;
-
     #ff {
         cursor: pointer;
     }
@@ -139,7 +167,6 @@ const Menu = styled.div`
     }
 
     .content {
-
         width: 100%;
         height: 100%;
 
@@ -178,11 +205,18 @@ const SearchBar = styled.div`
     height: 43px;
     background-color: #fff;
     border-radius: 8px;
+    border: none;
     
     display: flex;
     justify-content: space-between;
     align-items: center;
     column-gap: 2px;
+
+    position: relative;
+
+    &.open {
+        border-radius: 8px 8px 0 0;
+    }
 
     input {
         padding-left: 5px;
@@ -191,7 +225,7 @@ const SearchBar = styled.div`
         font-size: 19px;
         color: #c6c6c6;
         border: none;
-        border-radius: 8px;
+        border-radius: 8px 0 0 8px;
 
     }
 
@@ -200,11 +234,28 @@ const SearchBar = styled.div`
         height: 100%;
         padding-left: 10px;
         border: none;
-        background-color: #EEE;
         border-radius: 0 8px 8px 0;
+        background-color: #fff;
 
         display: flex;
         justify-content: center;
         align-items: center;
     }
+`
+
+const SearchResult = styled.div`
+    position: absolute;
+    z-index: 3;
+    bottom: 0 !important;
+    top: 100% !important;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: flex-start;
+
+    width: 100%;
+    height: fit-content;
+    border-radius: 0 0 8px 8px;
+    background-color: #E7E7E7;
 `

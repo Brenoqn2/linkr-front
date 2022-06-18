@@ -13,7 +13,6 @@ import Header from "../../Header";
 import config from "../../../config/config.json";
 
 export default function UserPage() {
-  console.log('GO GO THE MOON');
   const navigate = useNavigate();
   const location = useLocation();
   const [posts, setPosts] = useState(null);
