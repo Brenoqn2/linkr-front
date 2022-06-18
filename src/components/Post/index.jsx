@@ -11,11 +11,14 @@ import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 import UserContext from "../../contexts/userContext";
 
 import defaultImage from "../../assets/images/defaultImage.jpg";
-import likeIcon from "../../assets/images/likeIcon.svg";
 import editIcon from "../../assets/images/edit.svg";
 import deleteIcon from "../../assets/images/trash.svg";
 
 import config from "../../config/config.json";
+
+import Like from "../Like/index";
+import editPost from "../EditPost";
+import deletePost from "../DeletePost";
 
 export default function Post({ data }) {
   const navigate = useNavigate();
@@ -67,8 +70,8 @@ export default function Post({ data }) {
     if (data.userId === userData.id) {
         return (
             <Options>
-                <img src={editIcon} alt="Edit" onClick={editPost}/>
-                <img src={deleteIcon} alt="Delete" onClick={deletePost}/>
+                <img src={editIcon} alt="Edit" onClick={() => editPost(data.id)}/>
+                <img src={deleteIcon} alt="Delete" onClick={() => deletePost(data.id)}/>
             </Options>
             )
     }
@@ -82,10 +85,7 @@ export default function Post({ data }) {
       <PostItem>
         <Container>
           <UserPicture onClick={redirectToUser} url={data.picture} />
-          <Like>
-            <img src={likeIcon} alt="Like" />
-            <span>10 likes</span>
-          </Like>
+          <Like postId={data.id}/>
         </Container>
         <Container>
           <Head>
@@ -288,23 +288,6 @@ const LinkSnippet = styled.div`
 
 `;
 
-const Like = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  row-gap: 10px;
-
-  img {
-    width: 20px;
-  }
-
-  span {
-    font-size: 11px;
-    color: #fff;
-  }
-`;
-
 const Options = styled.div`
     display: flex;
     justify-content: center;
@@ -313,6 +296,7 @@ const Options = styled.div`
 
     img {
         width: 14px;
+        cursor: pointer;
     }
 
     img:hover {
