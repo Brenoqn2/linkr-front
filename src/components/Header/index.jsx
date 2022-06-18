@@ -41,7 +41,7 @@ export default function Header({ profilePic, username }) {
     return (
         <>
             <HeaderContainer>
-                <img src={logo} alt="LINKR" />
+                <img src={logo} alt="LINKR" id="ff" onClick={() => navigate('/timeline')}/>
                 <Container>
                     <img src={arrow} alt="menu" onClick={toggleMenu} className={menuCSS} />
                     <img src={profilePic} alt={`${username} profile`} />
@@ -72,6 +72,10 @@ const HeaderContainer = styled.header`
     position: fixed;
     top: 0;
     z-index: 2;
+
+    #ff {
+        cursor: pointer;
+    }
 
     img.open {
         transition: all .25s ease-in-out;
