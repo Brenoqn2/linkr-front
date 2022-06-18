@@ -36,10 +36,10 @@ export default function DeleteModal({setIsActive, id}) {
                     to delete this post?
                 </Container>
                 <Container>
-                    <button onClick={cancelDelete}>
+                    <button onClick={cancelDelete} disabled={loading}>
                         No, go back
                     </button>
-                    <button onClick={confirmDelete}>    
+                    <button onClick={confirmDelete} disabled={loading}>    
                         {loading ? 'Deleting...' : 'Yes, delete it'}
                     </button>
                 </Container>

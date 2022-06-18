@@ -17,8 +17,7 @@ import deleteIcon from "../../assets/images/trash.svg";
 import config from "../../config/config.json";
 
 import Like from "../Like/index";
-import editPost from "../EditPost";
-import deletePost from "../DeletePost";
+// import editPost from "../EditPost";
 
 export default function Post({ data }) {
   const navigate = useNavigate();
