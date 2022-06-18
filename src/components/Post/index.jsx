@@ -15,6 +15,8 @@ import deleteIcon from "../../assets/images/trash.svg";
 import config from "../../config/config.json";
 
 import Like from "../Like/index";
+import editPost from "../EditPost";
+import deletePost from "../DeletePost";
 
 export default function Post({ data }) {
   const [metadata, setMetadata] = useState(null);
@@ -53,20 +55,12 @@ export default function Post({ data }) {
     return text;
   }
 
-  function editPost() {
-    //TODO
-  }
-
-  function deletePost() {
-    //TODO
-  }
-
   function postOptionsBuilder() {
     if (data.userId === userData.id) {
         return (
             <Options>
-                <img src={editIcon} alt="Edit" onClick={editPost}/>
-                <img src={deleteIcon} alt="Delete" onClick={deletePost}/>
+                <img src={editIcon} alt="Edit" onClick={() => editPost(data.id)}/>
+                <img src={deleteIcon} alt="Delete" onClick={() => deletePost(data.id)}/>
             </Options>
             )
     }
@@ -290,6 +284,7 @@ const Options = styled.div`
 
     img {
         width: 14px;
+        cursor: pointer;
     }
 
     img:hover {
