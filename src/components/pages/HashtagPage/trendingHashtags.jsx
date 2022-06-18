@@ -26,7 +26,7 @@ export default function TrendingHashtags() {
         alert("Session expired, log in to continue");
         navigate("/");
       });
-  });
+  }, [navigate, token]);
   return (
     <>
       <TrendContainer>
