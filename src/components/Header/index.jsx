@@ -201,7 +201,7 @@ const Menu = styled.div`
 `
 
 const SearchBar = styled.div`
-    width: 563px;
+    width: 50%;
     height: 43px;
     background-color: #fff;
     border-radius: 8px;
@@ -241,6 +241,10 @@ const SearchBar = styled.div`
         justify-content: center;
         align-items: center;
     }
+
+    @media (max-width: 640px) {
+    display: none;
+  }
 `
 
 const SearchResult = styled.div`
