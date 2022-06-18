@@ -1,16 +1,25 @@
 import axios from "axios";
 import styled from "styled-components";
+import { useState, useContext } from "react";
+
+import PostsContext from "../../contexts/postsContext";
 
 import config from "../../config/config.json";
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 
 export default function DeleteModal({setIsActive, id}) {
     const header = GetTokenAndHeaders("headers");
-
+    const [ loading, setLoading ] = useState(false);
+    const { posts, setPosts } = useContext(PostsContext);
 
     function confirmDelete() {
+        setLoading(true);
         axios.delete(`${config.API}/post/${id}`, header)
-        .then(() => setIsActive(false))
+        .then(() => {
+            setLoading(false);
+            setPosts(posts.filter(post => post.id !== id));
+            setIsActive(false);
+        })
         .catch(err => console.log(err))
     }
 
@@ -31,7 +40,7 @@ export default function DeleteModal({setIsActive, id}) {
                         No, go back
                     </button>
                     <button onClick={confirmDelete}>    
-                        Yes, delete it
+                        {loading ? 'Deleting...' : 'Yes, delete it'}
                     </button>
                 </Container>
             </Alert>
