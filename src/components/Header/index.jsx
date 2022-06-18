@@ -4,14 +4,15 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useState, useContext } from "react";
 
-import logo from "../../assets/images/Logo.svg";
-import arrow from "../../assets/images/arrow.svg";
-import ChooseAvatar from "../Resources/ChooseAvatar";
-
 import TokenContext from "../../contexts/tokenContext";
 
 import config from "../../config/config.json";
+import ChooseAvatar from "../Resources/ChooseAvatar";
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
+
+import logo from "../../assets/images/Logo.svg";
+import arrow from "../../assets/images/arrow.svg";
+import search from "../../assets/images/search.svg";
 
 export default function Header({ profilePic, username }) {
 
@@ -42,6 +43,10 @@ export default function Header({ profilePic, username }) {
         <>
             <HeaderContainer>
                 <img src={logo} alt="LINKR" id="ff" onClick={() => navigate('/timeline')}/>
+                <SearchBar>
+                    <input type="text" placeholder="Search for people"/>
+                    <button><img src={search} alt="Search" /></button>
+                </SearchBar>
                 <Container>
                     <img src={arrow} alt="menu" onClick={toggleMenu} className={menuCSS} />
                     <img src={profilePic} alt={`${username} profile`} />
@@ -165,5 +170,41 @@ const Menu = styled.div`
             cursor: pointer;
 
         }
+    }
+`
+
+const SearchBar = styled.div`
+    width: 563px;
+    height: 43px;
+    background-color: #fff;
+    border-radius: 8px;
+    
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    column-gap: 2px;
+
+    input {
+        padding-left: 5px;
+        width: 100%;
+        height: 100%;
+        font-size: 19px;
+        color: #c6c6c6;
+        border: none;
+        border-radius: 8px;
+
+    }
+
+    button {
+        width: 43px;
+        height: 100%;
+        padding-left: 10px;
+        border: none;
+        background-color: #EEE;
+        border-radius: 0 8px 8px 0;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 `
