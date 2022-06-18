@@ -1,26 +1,30 @@
-import styled from "styled-components";
-import likeIcon from "../../assets/images/likeIcon.svg";
-import superlike from "../../assets/images/superlike.svg";
-import UserContext from "../../contexts/userContext";
 import { useState, useContext, useEffect } from "react";
+import styled from "styled-components";
 import axios from 'axios';
+
+import config from "../../config/config.json";
+import unlike from "../../assets/images/likeIcon.svg";
+import liked from "../../assets/images/superlike.svg";
+import UserContext from "../../contexts/userContext";
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 
 export default function Like({ postId }) {
 
     const { userData } = useContext(UserContext);
     const header = GetTokenAndHeaders("headers");
-    const [liked, setLiked] = useState(false);
-    const [likesCount, setLikesCount] = useState(0);
 
-    const [usersLike, setUsersLike] = useState([]); // preencher array com os usuários que curtiram esse post
+    const [likesData, setData] = useState({
+
+        postLikesCount: 0,
+        postUsersLikes: [],
+        postLiked: false,
+    });
 
     useEffect(() => {
 
-        axios.get(`http://localhost:5000/likes/${postId}`, header).then(res => {
-            setLikesCount(res.data.likes);
-            console.log(res.data);
+        axios.get(`${config.API}/likes/${postId}`, header).then(res => {
 
+            //console.log(res.data);
             // res.data vem isso :
 
             /* 
@@ -36,7 +40,19 @@ export default function Like({ postId }) {
                 }
             */
 
-            setUsersLike(res.data.users);
+            // faz um map para pegar o username e o userId
+            const users = res.data.users.map(user => {
+                return {
+                    userId: user.userId,
+                    username: user.username
+                }
+            });
+
+            setData({
+                postLikesCount: res.data.likes,
+                postUsersLikes: users,
+                postLiked: res.data.users.map(user => user.userId === userData.id).length > 0
+            });
 
         }).catch(err => {
             console.log(err);
@@ -46,41 +62,45 @@ export default function Like({ postId }) {
 
     function LikeThis(userId, postId) {
 
-        if (!liked) {
+        // verificar se o userId já curtiu o post
+        const userAlreadyLiked = likesData.postUsersLikes.some(user => user.userId === userId);
 
-            axios.post(`http://localhost:5000/like/${postId}`, { userId }, header)
+        if (userAlreadyLiked) {
 
+            axios.post(`${config.API}/unlike/${postId}`, { userId }, header)
                 .then(res => {
-
-                    setLiked(true);
-                    alert("Liked!");
-
+                    alert("Unliked!");
+                    setData({
+                        postLikesCount: likesData.postLikesCount - 1,
+                        postUsersLikes: likesData.postUsersLikes.filter(user => user.userId !== userId),
+                        postLiked: false,
+                    });
                 }).catch(err => console.log(err));
 
         } else {
 
-            axios.post(`http://localhost:5000/unlike/${postId}`, { userId }, header)
-
+            axios.post(`${config.API}/like/${postId}`, { userId }, header)
                 .then(res => {
-                    setLiked(false);
-                    alert("Unliked!");
-                    setLikesCount(likesCount - 1);
+                    setData({
+                        postLikesCount: likesData.postLikesCount + 1,
+                        postUsersLikes: [...likesData.postUsersLikes, { userId, username: userData.username }],
+                        postLiked: true,
+                    });
+                    alert("Liked!");
                 }).catch(err => console.log(err));
         }
-
     }
 
-    const usersLikeNames = usersLike.map(user => user.username + "\n");
+    // pega o nome de todos usuarios que curtiram o post e junta numa string separando por \n
+    const usersLikes = likesData.postUsersLikes.map(user => user.username).join("\n");
 
     return (
-
         <SuperLike>
-            <img src={liked ? superlike : likeIcon} alt="Like" onClick={() => LikeThis(userData.id, postId)} />
-            <span>{likesCount}</span>
-            <span>{usersLikeNames}</span>
+            <img src={likesData.postLiked ? liked : unlike} alt="Like" onClick={() => LikeThis(userData.id, postId)} />
+            <span>{likesData.likesCount}</span>
+            <span>{usersLikes}</span>
         </SuperLike>
     )
-
 }
 
 const SuperLike = styled.div`
