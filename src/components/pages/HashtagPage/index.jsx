@@ -41,10 +41,8 @@ export default function HashtagPage() {
   }
 
   function getPosts() {
-    setLoading(true);
-  
       axios
-        .get(`${config.API}/hashtag/${hashtag}`, header)
+        .get(`${config.API}/hashtag/${hashtag.toLowerCase()}`, header)
         .then((response) => {
           setPosts(response.data);
         })
@@ -53,6 +51,7 @@ export default function HashtagPage() {
   }
 
   useEffect(() => {
+    setLoading(true);
     getUserData();
   }, [hashtag]);
 
@@ -150,6 +149,7 @@ const LoadingContainer = styled.div`
 `;
 
 const NoContent = styled.div`
+  margin: 0 auto;
   display: flex;
   justify-content: center;
   align-items: center;
