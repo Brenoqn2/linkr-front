@@ -33,6 +33,7 @@ export default function TimelinePage() {
       })
       .catch((err) => {
         console.log(err);
+        alert('EXECUTOU ESSE');
         alert("Session expired, log in to continue");
         setToken("");
         navigate("/");

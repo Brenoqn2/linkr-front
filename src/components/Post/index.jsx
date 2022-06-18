@@ -5,6 +5,8 @@ import { useViewportWidth } from "../../hooks/useViewportWidth";
 import ReactHashtag from "@mdnm/react-hashtag";
 import styled from "styled-components";
 
+import DeleteModal from "../DeleteModal";
+
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 import UserContext from "../../contexts/userContext";
 
@@ -16,10 +18,11 @@ import deleteIcon from "../../assets/images/trash.svg";
 import config from "../../config/config.json";
 
 export default function Post({ data }) {
-  const [metadata, setMetadata] = useState(null);
   const navigate = useNavigate();
-  const { userData } = useContext(UserContext);
   const screenWidth = useViewportWidth();
+  const [metadata, setMetadata] = useState(null);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const { userData } = useContext(UserContext);
   const header = GetTokenAndHeaders("headers");
 
   // busca os metadados do link
@@ -57,7 +60,7 @@ export default function Post({ data }) {
   }
 
   function deletePost() {
-    //TODO
+    setDeleteModal(true);
   }
 
   function postOptionsBuilder() {
@@ -74,48 +77,49 @@ export default function Post({ data }) {
   const postOptions = postOptionsBuilder();
 
   return (
-    <PostItem>
-      <Container>
-        <UserPicture onClick={redirectToUser} url={data.picture} />
-        <Like>
-          <img src={likeIcon} alt="Like" />
-          <span>10 likes</span>
-        </Like>
-      </Container>
-
-      <Container>
-        <Head>
-            <UserName onClick={redirectToUser}>
-              {data.username}
-            </UserName>
-            {postOptions}
-        </Head>
-
-        <Desc>
-          <ReactHashtag
-            renderHashtag={(val) => (
-              <Hashtag
-                onClick={() => navigate(`/hashtag/${val.replace("#", "")}`)}>
-                {val}
-              </Hashtag>
-            )}>
-            {data.content}
-          </ReactHashtag>
-        </Desc>
-        <LinkSnippet onClick={() => window.open(data.link, "_blank")}>
-          <div>
-            <h2>{metadata?.title && screenWidth <= 600 ? shortenText(metadata?.title, 5) : metadata?.title}</h2>
-            <p>{metadata?.description && screenWidth <= 600 ? shortenText(metadata?.description, 10) : metadata?.description}</p>
-            <span>{metadata?.url}</span>
-          </div>
-          <img
-            onError={addDefaultImg}
-            src={metadata?.image}
-            alt={metadata?.title}
-          />
-        </LinkSnippet>
-      </Container>
-    </PostItem>
+    <>
+      {deleteModal ? <DeleteModal id={data.id} setIsActive={setDeleteModal}/> : undefined}
+      <PostItem>
+        <Container>
+          <UserPicture onClick={redirectToUser} url={data.picture} />
+          <Like>
+            <img src={likeIcon} alt="Like" />
+            <span>10 likes</span>
+          </Like>
+        </Container>
+        <Container>
+          <Head>
+              <UserName onClick={redirectToUser}>
+                {data.username}
+              </UserName>
+              {postOptions}
+          </Head>
+          <Desc>
+            <ReactHashtag
+              renderHashtag={(val) => (
+                <Hashtag
+                  onClick={() => navigate(`/hashtag/${val.replace("#", "")}`)}>
+                  {val}
+                </Hashtag>
+              )}>
+              {data.content}
+            </ReactHashtag>
+          </Desc>
+          <LinkSnippet onClick={() => window.open(data.link, "_blank")}>
+            <div>
+              <h2>{metadata?.title && screenWidth <= 600 ? shortenText(metadata?.title, 5) : metadata?.title}</h2>
+              <p>{metadata?.description && screenWidth <= 600 ? shortenText(metadata?.description, 10) : metadata?.description}</p>
+              <span>{metadata?.url}</span>
+            </div>
+            <img
+              onError={addDefaultImg}
+              src={metadata?.image}
+              alt={metadata?.title}
+            />
+          </LinkSnippet>
+        </Container>
+      </PostItem>
+    </>
   );
 }
 
