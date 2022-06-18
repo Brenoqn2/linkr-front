@@ -161,6 +161,7 @@ const LoadingContainer = styled.div`
 `;
 
 const NoContent = styled.div`
+  margin: 0 auto;
   display: flex;
   justify-content: center;
   align-items: center;
