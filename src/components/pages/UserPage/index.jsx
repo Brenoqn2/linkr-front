@@ -4,34 +4,26 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
 
-import TokenContext from "../../../contexts/tokenContext";
 import UserContext from "../../../contexts/userContext";
+import PostsContext from "../../../contexts/postsContext";
 
 import PostsList from "../../PostsList";
 import Header from "../../Header";
 
 import config from "../../../config/config.json";
+import GetTokenAndHeaders from "../../Resources/GetTokenAndHeaders";
 
 export default function UserPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [posts, setPosts] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { token } = useContext(TokenContext);
+  const { posts, setPosts } = useContext(PostsContext);
   const { userData, setUserData } = useContext(UserContext);
   const { id } = useParams();
 
-  console.log(location.state);
+  const header = GetTokenAndHeaders('headers');
 
   function getUserData() {
-    const header = {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      };
-
-      console.log(header);
-  
     axios.get(`${config.API}/user`, header)
     .then((response) => {
         setUserData({ ...response.data });
@@ -44,13 +36,6 @@ export default function UserPage() {
   }
 
   function getPosts() {
-    setLoading(true);
-    const header = {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      };
-  
       axios
         .get(`${config.API}/users/${id}`, header)
         .then((response) => {
@@ -62,6 +47,7 @@ export default function UserPage() {
   
 
   useEffect(() => {
+    setLoading(true);
     getUserData();
 }, [id]);
 
@@ -83,7 +69,7 @@ export default function UserPage() {
       <Header profilePic={userData?.picture} username={userData?.username} />
 
       <Main>
-        <h1>{`${location.state.username}'s posts`}</h1>
+        <h1>{`${location.state?.username || userData?.username}'s posts`}</h1>
         <Content>
           <PostsContent>
             {loading ? loadingElement : postsList}
