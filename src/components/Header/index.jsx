@@ -61,7 +61,7 @@ export default function Header({ profilePic, username }) {
 
 const HeaderContainer = styled.header`
     width: 100%;
-    height: 70px;
+    height: 75px;
     padding: 0 20px;
     background-color: #151515;
     
@@ -105,7 +105,7 @@ const Container = styled.div`
 `
 
 const Menu = styled.div`
-    height: 75px;
+    height: 100px;
     width: 150px;
     border-radius: 0px 0px 0px 20px;
     color: #fff;
@@ -124,12 +124,12 @@ const Menu = styled.div`
     font-weight: 500;
 
     &.open {
-        top: 70px;
+        top: 75px;
         transition: all .25s ease-in-out;
     }
 
     &.close {
-        top: 0;
+        top: -30px;
         transition: all .25s ease-in-out;
     }
 
@@ -142,14 +142,16 @@ const Menu = styled.div`
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        row-gap: 10px;
 
         label { cursor: pointer; }
 
         button {
 
             margin-top: 1%;
-            width: 112px;
-            height: 31px;
+            width: 90px;
+            height: 35px;
+            padding: 10px 0;
             
             background: #1877f2;
             border-radius: 5px;
