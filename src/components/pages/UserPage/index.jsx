@@ -6,50 +6,67 @@ import styled from "styled-components";
 
 import UserContext from "../../../contexts/userContext";
 import PostsContext from "../../../contexts/postsContext";
+import TokenContext from "../../../contexts/tokenContext";
 
 import PostsList from "../../PostsList";
 import Header from "../../Header";
 
 import config from "../../../config/config.json";
-import GetTokenAndHeaders from "../../Resources/GetTokenAndHeaders";
 
 export default function UserPage() {
+  console.log("GO GO THE MOON");
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(true);
   const { posts, setPosts } = useContext(PostsContext);
+  const { token, setToken } = useContext(TokenContext);
   const { userData, setUserData } = useContext(UserContext);
   const { id } = useParams();
 
-  const header = GetTokenAndHeaders('headers');
-
   function getUserData() {
-    axios.get(`${config.API}/user`, header)
-    .then((response) => {
+    const header = {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    };
+
+    console.log(header);
+
+    axios
+      .get(`${config.API}/user`, header)
+      .then((response) => {
         setUserData({ ...response.data });
         getPosts();
-    }).catch(err => {
+      })
+      .catch((err) => {
         console.log(err);
-        alert('Session expired, log in to continue');
-        navigate('/');
-    })
+        alert("Session expired, log in to continue");
+        setToken("");
+        navigate("/");
+      });
   }
 
   function getPosts() {
-      axios
-        .get(`${config.API}/users/${id}`, header)
-        .then((response) => {
-          setPosts(response.data);
-        })
-        .catch((err) => console.log(err))
-        .finally(() => setLoading(false));
+    setLoading(true);
+    const header = {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    };
+
+    axios
+      .get(`${config.API}/users/${id}`, header)
+      .then((response) => {
+        setPosts(response.data);
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
   }
-  
 
   useEffect(() => {
     setLoading(true);
     getUserData();
-}, [id]);
+  }, [id]);
 
   const postsList = posts?.length ? (
     <PostsList posts={posts}></PostsList>
@@ -71,9 +88,7 @@ export default function UserPage() {
       <Main>
         <h1>{`${location.state?.username || userData?.username}'s posts`}</h1>
         <Content>
-          <PostsContent>
-            {loading ? loadingElement : postsList}
-          </PostsContent>
+          <PostsContent>{loading ? loadingElement : postsList}</PostsContent>
           <TrendingsContent></TrendingsContent>
         </Content>
       </Main>
@@ -109,7 +124,7 @@ const LoadingContainer = styled.div`
   span {
     font-size: 30px;
     font-weight: bold;
-    opacity: .8;
+    opacity: 0.8;
     color: #fff;
   }
 
@@ -117,7 +132,8 @@ const LoadingContainer = styled.div`
     margin-bottom: 1px;
   }
 
-  span, svg {
+  span,
+  svg {
     animation-name: pulse;
     animation-duration: 3s;
     animation-iteration-count: infinite;
@@ -129,18 +145,18 @@ const LoadingContainer = styled.div`
 
   @keyframes pulse {
     0% {
-        color: #fff;
-        fill: #fff;
+      color: #fff;
+      fill: #fff;
     }
 
     50% {
-        color: #929191;
-        fill: #929191;
+      color: #929191;
+      fill: #929191;
     }
 
     100% {
-        color: #fff;
-        fill: #fff;
+      color: #fff;
+      fill: #fff;
     }
   }
 `;
@@ -167,7 +183,7 @@ const Main = styled.div`
     width: 100%;
 
     h1 {
-        padding-left: 20px;
+      padding-left: 20px;
     }
   }
 `;

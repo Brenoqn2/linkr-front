@@ -23,10 +23,9 @@ export default function TrendingHashtags() {
       })
       .catch((err) => {
         console.log(err);
-        alert("Session expired, log in to continue");
         navigate("/");
       });
-  });
+  }, [navigate, token]);
   return (
     <>
       <TrendContainer>
