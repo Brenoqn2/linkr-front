@@ -22,7 +22,7 @@ const PageContainer = styled.div`
             width: 100%;
             height: 100%;
 
-            text-align: center;
+            text-align: left;
             
             h1 {
                 font-family: 'Passion One';
@@ -36,19 +36,15 @@ const PageContainer = styled.div`
 
             h1:hover {        
 
-                -webkit-transform: scale(1.4);
-                -ms-transform: scale(1.4);
                 transform: scale(1.4);
-                -moz-transition: 2s ease-out;
+                transition: 2s ease-out;
             }
 
             h1:not(:hover) {
 
                 padding-top: 0px;
-                -webkit-transform: scale(1);
-                -ms-transform: scale(1);
                 transform: scale(1);
-                -moz-transition: 0.9s ease-out;
+                transition: 0.9s ease-out;
             } 
 
             h2 {
@@ -56,7 +52,7 @@ const PageContainer = styled.div`
                 font-weight: 700;
                 font-size: 23px;
                 line-height: 34px;
-                text-align: center;
+                text-align: left;
                 color: #FFFFFF;
                 cursor: pointer;
             }
@@ -64,19 +60,15 @@ const PageContainer = styled.div`
             h2:hover {        
                 
                 padding-top: 20px;
-                -webkit-transform: scale(1.4);
-                -ms-transform: scale(1.4);
                 transform: scale(1.4);
-                -moz-transition: 2s ease-out;
+                transition: 2s ease-out;
             }
 
             h2:not(:hover) {
 
                 padding-top: 0px;
-                -webkit-transform: scale(1);
-                -ms-transform: scale(1);
                 transform: scale(1);
-                -moz-transition: 0.9s ease-out;
+                transition: 0.9s ease-out;
             } 
         }
     }
@@ -110,6 +102,7 @@ const PageContainer = styled.div`
                     background: #FFFFFF;
                     margin-bottom: 2%;
                     border-radius: 4px;
+                    border: none;
 
                     font-family: 'Oswald';
                     font-style: normal;
@@ -162,34 +155,26 @@ const PageContainer = styled.div`
                     
                 button:hover {        
 
-                    -webkit-transform: scale(1.1);
-                    -ms-transform: scale(1.1);
                     transform: scale(1.1);
-                    -moz-transition: 0.9s ease-out;
+                    transition: 0.9s ease-out;
                 }
     
                 button:not(:hover) {
     
-                    -webkit-transform: scale(1);
-                    -ms-transform: scale(1);
                     transform: scale(1);
-                    -moz-transition: 0.9s ease-out;
+                    transition: 0.9s ease-out;
                 }
 
                 label:hover {        
 
-                    -webkit-transform: scale(1.1);
-                    -ms-transform: scale(1.1);
                     transform: scale(1.1);
-                    -moz-transition: 0.9s ease-out;
+                    transition: 0.9s ease-out;
                 }
     
                 label:not(:hover) {
     
-                    -webkit-transform: scale(1);
-                    -ms-transform: scale(1);
                     transform: scale(1);
-                    -moz-transition: 0.9s ease-out;
+                    transition: 0.9s ease-out;
                 }
                 
                 a {
@@ -208,18 +193,14 @@ const PageContainer = styled.div`
 
                 a:hover {        
 
-                    -webkit-transform: scale(1.1);
-                    -ms-transform: scale(1.1);
                     transform: scale(1.1);
-                    -moz-transition: 0.9s ease-out;
+                    transition: 0.9s ease-out;
                 }
     
                 a:not(:hover) {
     
-                    -webkit-transform: scale(1);
-                    -ms-transform: scale(1);
                     transform: scale(1);
-                    -moz-transition: 0.9s ease-out;
+                    transition: 0.9s ease-out;
                 }
             }
         }
@@ -241,6 +222,7 @@ const PageContainer = styled.div`
                 margin-top: 15%;
 
                 h1 {
+                    margin-left: 30%;
                     font-size: 106px;
                     line-height: 117px;
                     letter-spacing: 0.05em;

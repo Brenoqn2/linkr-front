@@ -21,7 +21,7 @@ export default function LoginPage() {
     if (token) {
       navigate("/timeline");
     }
-  });
+  }, []);
 
   function HandleSubmit(e) {
     e.preventDefault();

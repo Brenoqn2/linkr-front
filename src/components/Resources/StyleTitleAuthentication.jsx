@@ -4,7 +4,7 @@ export default function TitleAuthentication() {
         <div className="title-container">
             <div className="content">
                 <h1>linkr</h1>
-                <h2>save, share and discover<br></br>the best links on the web</h2>
+                <h2>save, share and discover<br />the best links on the web</h2>
             </div>
         </div>
     )
