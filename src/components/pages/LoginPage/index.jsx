@@ -33,6 +33,7 @@ export default function LoginPage() {
           password: data.password,
         })
         .then((res) => {
+          console.log(res);
           setToken(res.data.token);
           navigate("/timeline");
         })
