@@ -40,14 +40,14 @@ export default function HashtagPage() {
 
   function getPosts() {
     setLoading(true);
-  
-      axios
-        .get(`${config.API}/hashtag/${hashtag}`, header)
-        .then((response) => {
-          setPosts(response.data);
-        })
-        .catch((err) => console.log(err))
-        .finally(() => setLoading(false));
+
+    axios
+      .get(`${config.API}/hashtag/${hashtag}`, header)
+      .then((response) => {
+        setPosts(response.data);
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
   }
 
   useEffect(() => {
@@ -187,5 +187,3 @@ const PostsContent = styled.div`
   align-items: flex-start;
   width: 100%;
 `;
-
-
