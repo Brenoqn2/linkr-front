@@ -12,6 +12,7 @@ import HashtagPage from "../pages/HashtagPage/";
 
 import TokenContext from "../../contexts/tokenContext";
 import UserContext from "../../contexts/userContext";
+import PostsContext from "../../contexts/postsContext";
 
 import GlobalStyle from "../../assets/styles/GlobalStyle";
 import ResetCSS from "../../assets/styles/ResetCSS";
@@ -19,6 +20,7 @@ import ResetCSS from "../../assets/styles/ResetCSS";
 export default function App() {
   const [token, setToken] = useLocalStorage("token", null);
   const [userData, setUserData] = useLocalStorage("userData", null);
+  const [posts, setPosts] = useState(null);
 
   return (
     <BrowserRouter>
@@ -26,13 +28,15 @@ export default function App() {
       <GlobalStyle />
       <TokenContext.Provider value={{ token, setToken }}>
         <UserContext.Provider value={{ userData, setUserData }}>
-          <Routes>
-            <Route path="/" element={<LoginPage />} />
-            <Route path="/sign-up" element={<SignupPage />} />
-            <Route path="/timeline" element={<TimelinePage />} />
-            <Route path="/users/:id" element={<UserPage />} />
-            <Route path="/hashtag/:hashtag" element={<HashtagPage />} />
-          </Routes>
+          <PostsContext.Provider value={{posts, setPosts}}>
+            <Routes>
+              <Route path="/" element={<LoginPage />} />
+              <Route path="/sign-up" element={<SignupPage />} />
+              <Route path="/timeline" element={<TimelinePage />} />
+              <Route path="/users/:id" element={<UserPage />} />
+              <Route path="/hashtag/:hashtag" element={<HashtagPage />} />
+            </Routes>
+          </PostsContext.Provider>
         </UserContext.Provider>
       </TokenContext.Provider>
     </BrowserRouter>

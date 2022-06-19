@@ -5,17 +5,19 @@ import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
 import TrendingHashtags from "./trendingHashtags";
 
-import GetTokenAndHeaders from "../../Resources/GetTokenAndHeaders";
 import UserContext from "../../../contexts/userContext";
 import TokenContext from "../../../contexts/tokenContext";
+import PostsContext from "../../../contexts/postsContext";
 
 import PostsList from "../../PostsList";
 import Header from "../../Header";
+
+import GetTokenAndHeaders from "../../Resources/GetTokenAndHeaders";
 import config from "../../../config/config.json";
 
 export default function HashtagPage() {
   const navigate = useNavigate();
-  const [posts, setPosts] = useState(null);
+  const { posts, setPosts } = useContext(PostsContext);
   const [loading, setLoading] = useState(true);
 
   const { userData, setUserData } = useContext(UserContext);
@@ -39,10 +41,8 @@ export default function HashtagPage() {
   }
 
   function getPosts() {
-    setLoading(true);
-
     axios
-      .get(`${config.API}/hashtag/${hashtag}`, header)
+      .get(`${config.API}/hashtag/${hashtag.toLowerCase()}`, header)
       .then((response) => {
         setPosts(response.data);
       })
@@ -51,6 +51,7 @@ export default function HashtagPage() {
   }
 
   useEffect(() => {
+    setLoading(true);
     getUserData();
   }, [hashtag]);
 
@@ -148,6 +149,7 @@ const LoadingContainer = styled.div`
 `;
 
 const NoContent = styled.div`
+  margin: 0 auto;
   display: flex;
   justify-content: center;
   align-items: center;
