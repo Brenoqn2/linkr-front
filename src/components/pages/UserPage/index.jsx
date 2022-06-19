@@ -4,8 +4,9 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
 
-import TokenContext from "../../../contexts/tokenContext";
 import UserContext from "../../../contexts/userContext";
+import PostsContext from "../../../contexts/postsContext";
+import TokenContext from "../../../contexts/tokenContext";
 
 import PostsList from "../../PostsList";
 import Header from "../../Header";
@@ -16,13 +17,11 @@ export default function UserPage() {
   console.log("GO GO THE MOON");
   const navigate = useNavigate();
   const location = useLocation();
-  const [posts, setPosts] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { posts, setPosts } = useContext(PostsContext);
   const { token, setToken } = useContext(TokenContext);
   const { userData, setUserData } = useContext(UserContext);
   const { id } = useParams();
-
-  console.log(location.state);
 
   function getUserData() {
     const header = {
@@ -65,6 +64,7 @@ export default function UserPage() {
   }
 
   useEffect(() => {
+    setLoading(true);
     getUserData();
   }, [id]);
 
@@ -86,7 +86,7 @@ export default function UserPage() {
       <Header profilePic={userData?.picture} username={userData?.username} />
 
       <Main>
-        <h1>{`${location.state.username}'s posts`}</h1>
+        <h1>{`${location.state?.username || userData?.username}'s posts`}</h1>
         <Content>
           <PostsContent>{loading ? loadingElement : postsList}</PostsContent>
           <TrendingsContent></TrendingsContent>
