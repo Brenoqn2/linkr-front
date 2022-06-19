@@ -1,11 +1,10 @@
 import { useState, useContext, useEffect } from "react";
+import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import TokenContext from "../../../contexts/tokenContext";
 
-import PageContainer from "../../Resources/StyleAuthentication";
-import TitleAuthentication from "../../Resources/StyleTitleAuthentication.jsx";
 import ValidateThisEmailAndPass from "../../Resources/ValidateEmailAndPass";
 import Loader from "../../Resources/Loader";
 
@@ -46,10 +45,12 @@ export default function LoginPage() {
 
   return (
     <PageContainer>
-      <TitleAuthentication />
-      <div className="login-content">
-        <div className="input-container">
-          <form onSubmit={HandleSubmit}>
+      <LeftContainer>
+        <h1>linkr</h1>
+        <h2>save, share and discover<br />the best links on the web</h2>
+      </LeftContainer>
+      <RightContainer>
+        <form onSubmit={HandleSubmit}>
             <input
               type="text"
               placeholder="email"
@@ -64,9 +65,118 @@ export default function LoginPage() {
             />
             {loading ? Loader : <button type="submit">Sign In</button>}
             <Link to="/sign-up">First time? Create an account!</Link>
-          </form>
-        </div>
-      </div>
+        </form>
+      </RightContainer>
     </PageContainer>
   );
 }
+
+const PageContainer = styled.main`
+  display: flex;
+  width: 100%;
+  height: 100vh;
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+  }
+`
+
+const LeftContainer = styled.div`
+  width: 63%;
+  height: 100%;
+  padding-left: 100px;
+  padding-bottom: 100px;
+  background-color: #151515;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  
+  font-weight: 700;
+  color: #fff;
+
+  h1 {
+    font-size: 106px;
+    font-family: 'Passion One', cursive !important;
+  }
+
+  h2 {
+    font-size: 43px;
+    line-height: 64px;
+    font-family: 'Oswald', sans-serif !important;
+  }
+
+  @media (max-width: 640px) {
+    width: 100%;
+    min-height: 175px;
+    max-height: 175px;
+    padding: 0;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+    align-items: center;
+
+    h1 {
+      font-size: 71px;
+    }
+
+    h2 {
+      font-size: 23px;
+      line-height: normal;
+    }
+  }
+`
+
+const RightContainer = styled.div`
+  width: 37%;
+  height: 100%;
+  background-color: #333;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    row-gap: 10px;
+  }
+
+  button, input {
+    width: 70%;
+    height: 65px;
+    border: none;
+    border-radius: 6px;
+    font-size: 27px;
+    font-weight: 700;
+    font-family: 'Oswald', sans-serif !important;
+  }
+
+  input {
+    background-color: #fff;
+    padding-left: 10px;
+    color: #9F9F9F;
+  }
+
+  button {
+    background-color: #1877F2;
+    text-align: center;
+    color: #fff;
+  }
+
+  a {
+    color: #fff;
+  }
+
+  @media (max-width: 640px) {
+    width: 100%;
+
+    button, input {
+      width: 90%;
+      height: 55px;
+    }
+  }
+`
