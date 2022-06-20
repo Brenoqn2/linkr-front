@@ -1,15 +1,14 @@
 import styled from "styled-components"
-
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useState, useContext, useEffect } from "react";
 import { DebounceInput } from "react-debounce-input";
+import dotenv from "dotenv";
 
 import ResultItem from "../ResultItem";
 
 import TokenContext from "../../contexts/tokenContext";
 
-import config from "../../config/config.json";
 import ChooseAvatar from "../Resources/ChooseAvatar";
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 
@@ -17,8 +16,10 @@ import logo from "../../assets/images/Logo.svg";
 import arrow from "../../assets/images/arrow.svg";
 import search from "../../assets/images/search.svg";
 
-export default function Header({ profilePic, username }) {
+dotenv.config();
 
+export default function Header({ profilePic, username }) {
+    const API = process.env.REACT_APP_API;
     const navigate = useNavigate();
     const { setToken } = useContext(TokenContext);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -28,7 +29,7 @@ export default function Header({ profilePic, username }) {
     const header = GetTokenAndHeaders("headers");
 
     function getSearchResult() {
-        axios.get(`${config.API}/users?name=${searchInput}`, header)
+        axios.get(`${API}/users?name=${searchInput}`, header)
         .then(response => setSearchResult(response.data))
         .catch(err => console.log(err));
     }
@@ -38,7 +39,7 @@ export default function Header({ profilePic, username }) {
     }
 
     function Logout() {
-        axios.post(`${config.API}/logout`, {}, { headers: { authorization: `Bearer ${token}` } })
+        axios.post(`${API}/logout`, {}, { headers: { authorization: `Bearer ${token}` } })
             .then(res => {
                 setToken('');
                 navigate('/');

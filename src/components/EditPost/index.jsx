@@ -1,11 +1,14 @@
 import axios from "axios";
 import styled from "styled-components";
 import { useState, useEffect, useCallback, useRef } from "react";
+import dotenv from "dotenv";
 
-import config from "../../config/config.json";
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 
+dotenv.config();
+
 export default function EditPost({ setIsActive, data, content, setContent }) {
+  const API = process.env.REACT_APP_API;
   const header = GetTokenAndHeaders("headers");
   const [formData, setFormData] = useState({
     content,
@@ -38,7 +41,7 @@ export default function EditPost({ setIsActive, data, content, setContent }) {
     setIsLoading(true);
     axios
       .put(
-        `${config.API}/post/${data.id}`,
+        `${API}/post/${data.id}`,
         {
           link: data.link,
           content: formData.content,

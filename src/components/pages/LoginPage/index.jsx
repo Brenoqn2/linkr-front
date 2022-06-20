@@ -2,15 +2,19 @@ import { useState, useContext, useEffect } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import dotenv from "dotenv";
 
 import TokenContext from "../../../contexts/tokenContext";
 
 import ValidateThisEmailAndPass from "../../Resources/ValidateEmailAndPass";
 import Loader from "../../Resources/Loader";
 
-import config from "../../../config/config.json";
+dotenv.config();
 
 export default function LoginPage() {
+  const API = process.env.REACT_APP_API;
+  console.log("🚀 ~ file: index.jsx ~ line 18 ~ LoginPage ~ API", API)
+  
   const navigate = useNavigate();
   const [data, setData] = useState({ email: null, password: null });
   const [loading, setLoading] = useState(false);
@@ -28,7 +32,7 @@ export default function LoginPage() {
 
     if (ValidateThisEmailAndPass(data.email, data.password)) {
       axios
-        .post(config.API + "/signin", {
+        .post(API + "/signin", {
           email: data.email,
           password: data.password,
         })

@@ -1,15 +1,19 @@
 import { useState, useContext, useEffect } from "react";
 import styled from "styled-components";
 import axios from 'axios';
+import dotenv from "dotenv";
 
-import config from "../../config/config.json";
-import unlike from "../../assets/images/likeIcon.svg";
-import liked from "../../assets/images/superlike.svg";
 import UserContext from "../../contexts/userContext";
+
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 
-export default function Like({ postId }) {
+import unlike from "../../assets/images/likeIcon.svg";
+import liked from "../../assets/images/superlike.svg";
 
+dotenv.config();
+
+export default function Like({ postId }) {
+    const API = process.env.REACT_APP_API;
     const { userData } = useContext(UserContext);
     const header = GetTokenAndHeaders("headers");
 
@@ -22,7 +26,7 @@ export default function Like({ postId }) {
 
     useEffect(() => {
 
-        axios.get(`${config.API}/likes/${postId}`, header).then(res => {
+        axios.get(`${API}/likes/${postId}`, header).then(res => {
 
             //console.log(res.data);
             // res.data vem isso :
@@ -67,7 +71,7 @@ export default function Like({ postId }) {
 
         if (userAlreadyLiked) {
 
-            axios.post(`${config.API}/unlike/${postId}`, { userId }, header)
+            axios.post(`${API}/unlike/${postId}`, { userId }, header)
                 .then(res => {
                     alert("Unliked!");
                     setData({
@@ -79,7 +83,7 @@ export default function Like({ postId }) {
 
         } else {
 
-            axios.post(`${config.API}/like/${postId}`, { userId }, header)
+            axios.post(`${API}/like/${postId}`, { userId }, header)
                 .then(res => {
                     setData({
                         postLikesCount: likesData.postLikesCount + 1,

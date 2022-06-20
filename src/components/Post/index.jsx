@@ -4,9 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { useViewportWidth } from "../../hooks/useViewportWidth";
 import ReactHashtag from "@mdnm/react-hashtag";
 import styled from "styled-components";
+import dotenv from "dotenv";
 
 import DeleteModal from "../DeleteModal";
 import EditPost from "../EditPost";
+import Like from "../Like/index";
 
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 import UserContext from "../../contexts/userContext";
@@ -15,16 +17,15 @@ import defaultImage from "../../assets/images/defaultImage.jpg";
 import editIcon from "../../assets/images/edit.svg";
 import deleteIcon from "../../assets/images/trash.svg";
 
-import config from "../../config/config.json";
-
-import Like from "../Like/index";
+dotenv.config();
 
 export default function Post({ data }) {
+  const API = process.env.REACT_APP_API;
   const navigate = useNavigate();
   const screenWidth = useViewportWidth();
   const [metadata, setMetadata] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
-  const [editIput, setEditIput] = useState(false);
+  const [editInput, setEditInput] = useState(false);
   const [content, setContent] = useState(data.content);
   const { userData } = useContext(UserContext);
   const header = GetTokenAndHeaders("headers");
@@ -32,7 +33,7 @@ export default function Post({ data }) {
   // busca os metadados do link
   useEffect(() => {
     axios
-      .get(`${config.API}/posts/${data.id}/metadata`, header)
+      .get(`${API}/posts/${data.id}/metadata`, header)
       .then((response) => {
         setMetadata(response.data);
       })
@@ -63,8 +64,7 @@ export default function Post({ data }) {
   }
 
   function editPost() { // setEditIput(!editIput)
-    if (editIput) setEditIput(false);
-    else setEditIput(true);
+    setEditInput(!editInput)
   }
 
   function deletePost() {
@@ -87,8 +87,8 @@ export default function Post({ data }) {
   }
 
   function postContentBuilder() {
-    if (editIput) {
-      return <EditPost data={data} setIsActive={setEditIput} content={content} setContent={setContent} />;
+    if (editInput) {
+      return <EditPost data={data} setIsActive={setEditInput} content={content} setContent={setContent} />;
     } else {
       return (
         <ReactHashtag
