@@ -6,6 +6,7 @@ import ReactHashtag from "@mdnm/react-hashtag";
 import styled from "styled-components";
 
 import DeleteModal from "../DeleteModal";
+import EditPost from "../EditPost";
 
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 import UserContext from "../../contexts/userContext";
@@ -17,13 +18,13 @@ import deleteIcon from "../../assets/images/trash.svg";
 import config from "../../config/config.json";
 
 import Like from "../Like/index";
-// import editPost from "../EditPost";
 
 export default function Post({ data }) {
   const navigate = useNavigate();
   const screenWidth = useViewportWidth();
   const [metadata, setMetadata] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [editIput, setEditIput] = useState(false);
   const { userData } = useContext(UserContext);
   const header = GetTokenAndHeaders("headers");
 
@@ -42,7 +43,13 @@ export default function Post({ data }) {
   }
 
   function redirectToUser() {
+<<<<<<< HEAD
     navigate(`/users/${data.userId}`, { state: { username: data.username } });
+=======
+    navigate(`/users/${data.userId}`, {
+      state: { username: data.username },
+    });
+>>>>>>> main
   }
 
   function shortenText(text, charsMax) {
@@ -59,7 +66,8 @@ export default function Post({ data }) {
   }
 
   function editPost() {
-    //TODO
+    if (editIput) setEditIput(false);
+    else setEditIput(true);
   }
 
   function deletePost() {
@@ -83,6 +91,26 @@ export default function Post({ data }) {
 
   const postOptions = postOptionsBuilder();
 
+  function postContentBuilder() {
+    if (editIput) {
+      return <EditPost data={data} setIsActive={setEditIput} />;
+    } else {
+      return (
+        <ReactHashtag
+          renderHashtag={(val) => (
+            <Hashtag
+              key={val}
+              onClick={() => navigate(`/hashtag/${val.replace("#", "")}`)}>
+              {val}
+            </Hashtag>
+          )}>
+          {data.content}
+        </ReactHashtag>
+      );
+    }
+  }
+  const postContent = postContentBuilder();
+
   return (
     <>
       {deleteModal ? (
@@ -98,19 +126,7 @@ export default function Post({ data }) {
             <UserName onClick={redirectToUser}>{data.username}</UserName>
             {postOptions}
           </Head>
-          <Desc>
-            <ReactHashtag
-              renderHashtag={(val) => (
-                <Hashtag
-                  onClick={() => navigate(`/hashtag/${val.replace("#", "")}`)}
-                >
-                  {val}
-                </Hashtag>
-              )}
-            >
-              {data.content}
-            </ReactHashtag>
-          </Desc>
+          <Desc>{postContent}</Desc>
           <LinkSnippet onClick={() => window.open(data.link, "_blank")}>
             <div>
               <h2>
@@ -191,9 +207,11 @@ const Head = styled.div`
   align-items: center;
 `;
 
-const Hashtag = styled.p`
+const Hashtag = styled.span`
   display: inline;
   color: #fff;
+  font-size: 17px;
+  font-weight: 700;
   cursor: pointer;
 `;
 
@@ -214,6 +232,10 @@ const UserPicture = styled.div`
 `;
 
 const Desc = styled.div`
+<<<<<<< HEAD
+=======
+  width: 100%;
+>>>>>>> main
   font-size: 17px;
   color: #b7b7b7;
 `;
