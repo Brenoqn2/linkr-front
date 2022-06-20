@@ -11,26 +11,27 @@ import config from "../../config/config.json";
 import unlike from "../../assets/images/likeIcon.svg";
 import liked from "../../assets/images/superlike.svg";
 
-
 export default function Like({ postId }) {
-    const API = config.API;
-    const { userData } = useContext(UserContext);
-    const header = GetTokenAndHeaders("headers");
+  const API = config.API;
+  const { userData } = useContext(UserContext);
+  const header = GetTokenAndHeaders("headers");
 
-    const [likesData, setData] = useState({
-        postLikesCount: 0,
-        postUsersLikes: [{ username: "" }],
-        postLiked: false,
-    });
+  const [likesData, setData] = useState({
+    postLikesCount: 0,
+    postUsersLikes: [{ username: "" }],
+    postLiked: false,
+  });
 
-    useEffect(() => {
+  const [likedByUser, setLikedByUser] = useState("");
 
-        axios.get(`${API}/likes/${postId}`, header).then(res => {
+  useEffect(() => {
+    axios
+      .get(`${API}/likes/${postId}`, header)
+      .then((res) => {
+        //console.log(res.data);
+        // res.data vem isso :
 
-            //console.log(res.data);
-            // res.data vem isso :
-
-            /* 
+        /* 
                 {
                     "postId": "113",
                     "likes": "1",
@@ -58,6 +59,10 @@ export default function Like({ postId }) {
             res.data.users.map((user) => user.userId === userData.id).length >
             0,
         });
+
+        setLikedByUser(
+          res.data.users.find((user) => user.userId === userData.id)
+        );
       })
       .catch((err) => {
         console.log(err);
@@ -74,6 +79,7 @@ export default function Like({ postId }) {
       axios
         .post(`${API}/unlike/${postId}`, { userId }, header)
         .then((res) => {
+          setLikedByUser("");
           setData({
             postLikesCount: likesData.postLikesCount - 1,
             postUsersLikes: likesData.postUsersLikes.filter(
@@ -87,6 +93,7 @@ export default function Like({ postId }) {
       axios
         .post(`${API}/like/${postId}`, { userId }, header)
         .then((res) => {
+          setLikedByUser(userData.id);
           setData({
             postLikesCount: likesData.postLikesCount + 1,
             postUsersLikes: [
@@ -107,7 +114,7 @@ export default function Like({ postId }) {
       <img
         data-tip
         data-for={String(postId)}
-        src={likesData.postLiked ? liked : unlike}
+        src={likedByUser ? liked : unlike}
         alt="Like"
         onClick={() => LikeThis(userData.id, postId)}
       />
