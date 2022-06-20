@@ -16,11 +16,16 @@ export default function DeleteModal({setIsActive, id}) {
         setLoading(true);
         axios.delete(`${config.API}/post/${id}`, header)
         .then(() => {
-            setLoading(false);
             setPosts(posts.filter(post => post.id !== id));
+        })
+        .catch(err => {
+            console.log(err);
+            alert('Nao foi possivel deletar o post');
+        })
+        .finally(() => {
+            setLoading(false);
             setIsActive(false);
         })
-        .catch(err => console.log(err))
     }
 
     function cancelDelete() {
