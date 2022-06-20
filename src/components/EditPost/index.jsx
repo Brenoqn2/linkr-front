@@ -1,14 +1,14 @@
 import axios from "axios";
 import styled from "styled-components";
-import { useState, useContext, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 import config from "../../config/config.json";
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 
-export default function EditPost({ setIsActive, data }) {
+export default function EditPost({ setIsActive, data, content, setContent }) {
   const header = GetTokenAndHeaders("headers");
   const [formData, setFormData] = useState({
-    content: data.content,
+    content,
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -46,15 +46,16 @@ export default function EditPost({ setIsActive, data }) {
         header
       )
       .then((res) => {
-        setIsLoading(false);
-        setIsActive(false);
+        setContent(formData.content);
       })
       .catch((e) => {
         alert("Houve um erro ao publicar seu link");
-        setIsLoading(false);
         console.log(`ops !\n\n${e.response.data}`);
       })
-      .finally(() => window.location.reload(true));
+      .finally(() => {
+        setIsLoading(false);
+        setIsActive(false);
+      });
   }
 
   if (isLoading)

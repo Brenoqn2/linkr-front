@@ -25,6 +25,7 @@ export default function Post({ data }) {
   const [metadata, setMetadata] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
   const [editIput, setEditIput] = useState(false);
+  const [content, setContent] = useState(data.content);
   const { userData } = useContext(UserContext);
   const header = GetTokenAndHeaders("headers");
 
@@ -61,7 +62,7 @@ export default function Post({ data }) {
     return text;
   }
 
-  function editPost() {
+  function editPost() { // setEditIput(!editIput)
     if (editIput) setEditIput(false);
     else setEditIput(true);
   }
@@ -85,11 +86,9 @@ export default function Post({ data }) {
     }
   }
 
-  const postOptions = postOptionsBuilder();
-
   function postContentBuilder() {
     if (editIput) {
-      return <EditPost data={data} setIsActive={setEditIput} />;
+      return <EditPost data={data} setIsActive={setEditIput} content={content} setContent={setContent} />;
     } else {
       return (
         <ReactHashtag
@@ -100,11 +99,13 @@ export default function Post({ data }) {
               {val}
             </Hashtag>
           )}>
-          {data.content}
+          {content}
         </ReactHashtag>
       );
     }
   }
+  
+  const postOptions = postOptionsBuilder();
   const postContent = postContentBuilder();
 
   return (
