@@ -3,7 +3,6 @@ import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
-import dotenv from "dotenv";
 
 import UserContext from "../../../contexts/userContext";
 import TokenContext from "../../../contexts/tokenContext";
@@ -15,11 +14,10 @@ import CreatePost from "../../CreatePost";
 import TrendingHashtags from "../HashtagPage/trendingHashtags";
 
 import GetTokenAndHeaders from "../../Resources/GetTokenAndHeaders";
-
-dotenv.config();
+import config from "../../../config/config.json";
 
 export default function TimelinePage() {
-  const API = process.env.REACT_APP_API;
+  const API = config.API;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const { posts, setPosts } = useContext(PostsContext);

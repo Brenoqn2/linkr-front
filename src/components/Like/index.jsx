@@ -1,20 +1,19 @@
 import { useState, useContext, useEffect } from "react";
 import styled from "styled-components";
-import dotenv from "dotenv";
 import axios from "axios";
 import ReactTooltip from "react-tooltip";
 
 import UserContext from "../../contexts/userContext";
 
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
+import config from "../../config/config.json";
 
 import unlike from "../../assets/images/likeIcon.svg";
 import liked from "../../assets/images/superlike.svg";
 
-dotenv.config();
 
 export default function Like({ postId }) {
-    const API = process.env.REACT_APP_API;
+    const API = config.API;
     const { userData } = useContext(UserContext);
     const header = GetTokenAndHeaders("headers");
 

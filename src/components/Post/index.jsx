@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useViewportWidth } from "../../hooks/useViewportWidth";
 import ReactHashtag from "@mdnm/react-hashtag";
 import styled from "styled-components";
-import dotenv from "dotenv";
 
 import DeleteModal from "../DeleteModal";
 import EditPost from "../EditPost";
@@ -17,10 +16,10 @@ import defaultImage from "../../assets/images/defaultImage.jpg";
 import editIcon from "../../assets/images/edit.svg";
 import deleteIcon from "../../assets/images/trash.svg";
 
-dotenv.config();
+import config from "../../config/config.json";
 
 export default function Post({ data }) {
-  const API = process.env.REACT_APP_API;
+  const API = config.API;
   const navigate = useNavigate();
   const screenWidth = useViewportWidth();
   const [metadata, setMetadata] = useState(null);

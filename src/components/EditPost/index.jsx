@@ -1,14 +1,13 @@
 import axios from "axios";
 import styled from "styled-components";
 import { useState, useEffect, useCallback, useRef } from "react";
-import dotenv from "dotenv";
 
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 
-dotenv.config();
+import config from "../../config/config.json";
 
 export default function EditPost({ setIsActive, data, content, setContent }) {
-  const API = process.env.REACT_APP_API;
+  const API = config.API;
   const header = GetTokenAndHeaders("headers");
   const [formData, setFormData] = useState({
     content,

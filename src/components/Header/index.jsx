@@ -11,15 +11,14 @@ import TokenContext from "../../contexts/tokenContext";
 
 import ChooseAvatar from "../Resources/ChooseAvatar";
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
+import config from "../../config/config.json";
 
 import logo from "../../assets/images/Logo.svg";
 import arrow from "../../assets/images/arrow.svg";
 import search from "../../assets/images/search.svg";
 
-dotenv.config();
-
 export default function Header({ profilePic, username }) {
-    const API = process.env.REACT_APP_API;
+    const API = config.API;
     const navigate = useNavigate();
     const { setToken } = useContext(TokenContext);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
