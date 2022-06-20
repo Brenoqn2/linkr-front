@@ -2,15 +2,17 @@ import axios from "axios";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import dotenv from "dotenv";
 
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 import UserContext from "../../contexts/userContext";
 
 import defaultImage from "../../assets/images/defaultImage.jpg";
 
-import config from "../../config/config.json";
+dotenv.config();
 
 export default function CreatePost({ updatePosts }) {
+  const API = process.env.REACT_APP_API;
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     link: "",
@@ -39,7 +41,7 @@ export default function CreatePost({ updatePosts }) {
     setFormData({ ...formData, loading: true });
     axios
       .post(
-        `${config.API}/post`,
+        `${API}/post`,
         {
           link: formData.link,
           content: formData.content,

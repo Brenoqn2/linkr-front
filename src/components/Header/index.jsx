@@ -1,15 +1,14 @@
-import styled from "styled-components";
-
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import styled from "styled-components"
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { useState, useContext, useEffect } from "react";
 import { DebounceInput } from "react-debounce-input";
+import dotenv from "dotenv";
 
 import ResultItem from "../ResultItem";
 
 import TokenContext from "../../contexts/tokenContext";
 
-import config from "../../config/config.json";
 import ChooseAvatar from "../Resources/ChooseAvatar";
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 
@@ -17,42 +16,38 @@ import logo from "../../assets/images/Logo.svg";
 import arrow from "../../assets/images/arrow.svg";
 import search from "../../assets/images/search.svg";
 
+dotenv.config();
+
 export default function Header({ profilePic, username }) {
-  const navigate = useNavigate();
-  const { setToken } = useContext(TokenContext);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchInput, setSearchInput] = useState(null);
-  const [searchResult, setSearchResult] = useState([]);
-  const token = GetTokenAndHeaders("token");
-  const header = GetTokenAndHeaders("headers");
+    const API = process.env.REACT_APP_API;
+    const navigate = useNavigate();
+    const { setToken } = useContext(TokenContext);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [ searchInput, setSearchInput ] = useState(null);
+    const [searchResult, setSearchResult ] = useState([]);
+    const token = GetTokenAndHeaders("token");
+    const header = GetTokenAndHeaders("headers");
 
-  function getSearchResult() {
-    axios
-      .get(`${config.API}/users?name=${searchInput}`, header)
-      .then((response) => setSearchResult(response.data))
-      .catch((err) => console.log(err));
-  }
+    function getSearchResult() {
+        axios.get(`${API}/users?name=${searchInput}`, header)
+        .then(response => setSearchResult(response.data))
+        .catch(err => console.log(err));
+    }
 
-  function toggleMenu() {
-    setIsMenuOpen(!isMenuOpen);
-  }
+    function toggleMenu() {
+        setIsMenuOpen(!isMenuOpen)
+    }
 
-  function Logout() {
-    axios
-      .post(
-        `${config.API}/logout`,
-        {},
-        { headers: { authorization: `Bearer ${token}` } }
-      )
-      .then((res) => {
-        setToken("");
-        navigate("/");
-        alert("bye bye!");
-      })
-      .catch((err) => {
-        alert("Logout not completed!");
-      });
-  }
+    function Logout() {
+        axios.post(`${API}/logout`, {}, header)
+            .then(res => {
+                setToken('');
+                navigate('/');
+                alert('bye bye!');
+            }).catch(err => {
+                alert('Logout not completed!');
+            });
+    }
 
   useEffect(() => {
     if (!searchInput) return;

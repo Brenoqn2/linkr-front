@@ -3,6 +3,7 @@ import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
+import dotenv from "dotenv";
 
 import UserContext from "../../../contexts/userContext";
 import TokenContext from "../../../contexts/tokenContext";
@@ -14,9 +15,11 @@ import CreatePost from "../../CreatePost";
 import TrendingHashtags from "../HashtagPage/trendingHashtags";
 
 import GetTokenAndHeaders from "../../Resources/GetTokenAndHeaders";
-import config from "../../../config/config.json";
+
+dotenv.config();
 
 export default function TimelinePage() {
+  const API = process.env.REACT_APP_API;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const { posts, setPosts } = useContext(PostsContext);
@@ -26,7 +29,7 @@ export default function TimelinePage() {
 
   function getUserData() {
     axios
-      .get(`${config.API}/user`, header)
+      .get(`${API}/user`, header)
       .then((response) => {
         setUserData({ ...response.data });
         getPosts();
@@ -42,7 +45,7 @@ export default function TimelinePage() {
   function getPosts() {
     setLoading(true);
     axios
-      .get(`${config.API}/posts`, header)
+      .get(`${API}/posts`, header)
       .then((response) => {
         setPosts(response.data);
       })

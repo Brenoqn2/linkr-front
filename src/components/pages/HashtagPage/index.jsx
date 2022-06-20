@@ -3,19 +3,22 @@ import { useEffect, useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
-import TrendingHashtags from "./trendingHashtags";
+import dotenv from "dotenv";
 
 import UserContext from "../../../contexts/userContext";
 import TokenContext from "../../../contexts/tokenContext";
 import PostsContext from "../../../contexts/postsContext";
 
+import TrendingHashtags from "./trendingHashtags";
 import PostsList from "../../PostsList";
 import Header from "../../Header";
 
 import GetTokenAndHeaders from "../../Resources/GetTokenAndHeaders";
-import config from "../../../config/config.json";
+
+dotenv.config();
 
 export default function HashtagPage() {
+  const API = process.env.REACT_APP_API;
   const navigate = useNavigate();
   const { posts, setPosts } = useContext(PostsContext);
   const [loading, setLoading] = useState(true);
@@ -27,7 +30,7 @@ export default function HashtagPage() {
 
   function getUserData() {
     axios
-      .get(`${config.API}/user`, header)
+      .get(`${API}/user`, header)
       .then((response) => {
         setUserData({ ...response.data });
         getPosts();
@@ -42,7 +45,7 @@ export default function HashtagPage() {
 
   function getPosts() {
     axios
-      .get(`${config.API}/hashtag/${hashtag.toLowerCase()}`, header)
+      .get(`${API}/hashtag/${hashtag.toLowerCase()}`, header)
       .then((response) => {
         setPosts(response.data);
       })
