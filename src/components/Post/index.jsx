@@ -207,7 +207,7 @@ const Hashtag = styled.span`
   display: inline;
   color: #fff;
   font-size: 17px;
-  color: #b7b7b7;
+  font-weight: 700;
   cursor: pointer;
 `;
 
@@ -229,6 +229,8 @@ const UserPicture = styled.div`
 
 const Desc = styled.div`
   width: 100%;
+  font-size: 17px;
+  color: #b7b7b7;
 `;
 
 const LinkSnippet = styled.div`

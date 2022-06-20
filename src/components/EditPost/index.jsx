@@ -53,7 +53,8 @@ export default function EditPost({ setIsActive, data }) {
         alert("Houve um erro ao publicar seu link");
         setIsLoading(false);
         console.log(`ops !\n\n${e.response.data}`);
-      });
+      })
+      .finally(() => window.location.reload(true));
   }
 
   if (isLoading)
