@@ -95,7 +95,8 @@ export default function Post({ data }) {
           renderHashtag={(val) => (
             <Hashtag
               key={val}
-              onClick={() => navigate(`/hashtag/${val.replace("#", "")}`)}>
+              onClick={() => navigate(`/hashtag/${val.replace("#", "")}`)}
+            >
               {val}
             </Hashtag>
           )}>
