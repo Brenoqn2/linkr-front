@@ -10,14 +10,14 @@ import defaultImage from "../../assets/images/defaultImage.jpg";
 
 import config from "../../config/config.json";
 
-export default function CreatePost({updatePosts}) {
+export default function CreatePost({ updatePosts }) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     link: "",
     content: "",
     loading: false,
   });
-  
+
   const { userData } = useContext(UserContext);
   const header = GetTokenAndHeaders("headers");
 
@@ -54,12 +54,12 @@ export default function CreatePost({updatePosts}) {
         alert("Houve um erro ao publicar seu link");
         console.log(`ops !\n\n${e.response.data}`);
       })
-      .finally(() => setFormData({link: "", content: "", loading: false}));
+      .finally(() => setFormData({ link: "", content: "", loading: false }));
   }
 
   return (
     <PostCreator onSubmit={handleSubmit}>
-      <UserPicture url={userData?.picture} />
+      <UserPicture className="user-picture" url={userData?.picture} />
 
       <Container>
         <p>What are you going to share today?</p>
@@ -118,8 +118,11 @@ const PostCreator = styled.form`
 
   @media (max-width: 640px) {
     border-radius: 0;
-  }
 
+    .user-picture {
+      display: none;
+    }
+  }
   p {
     font-weight: 300;
     font-size: 17px;
@@ -190,6 +193,7 @@ const Button = styled.div`
 `;
 
 const UserPicture = styled.div`
+  display: flex;
   min-width: 50px;
   height: 50px;
   border-radius: 50%;

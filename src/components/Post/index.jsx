@@ -6,6 +6,7 @@ import ReactHashtag from "@mdnm/react-hashtag";
 import styled from "styled-components";
 
 import DeleteModal from "../DeleteModal";
+import EditPost from "../EditPost";
 
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 import UserContext from "../../contexts/userContext";
@@ -17,13 +18,13 @@ import deleteIcon from "../../assets/images/trash.svg";
 import config from "../../config/config.json";
 
 import Like from "../Like/index";
-// import editPost from "../EditPost";
 
 export default function Post({ data }) {
   const navigate = useNavigate();
   const screenWidth = useViewportWidth();
   const [metadata, setMetadata] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [editIput, setEditIput] = useState(false);
   const { userData } = useContext(UserContext);
   const header = GetTokenAndHeaders("headers");
 
@@ -42,23 +43,27 @@ export default function Post({ data }) {
   }
 
   function redirectToUser() {
-    navigate(`/users/${data.userId}`, {state: {username: data.username}});
+    navigate(`/users/${data.userId}`, {
+      state: { username: data.username },
+    });
   }
 
   function shortenText(text, charsMax) {
     let shortenText = text.split(/[\s,.]+/);
-    if(shortenText.length >= charsMax) {
-        shortenText.splice(charsMax);
-        shortenText = shortenText.join(' ');
+    if (shortenText.length >= charsMax) {
+      shortenText.splice(charsMax);
+      shortenText = shortenText.join(" ");
 
-        if(shortenText[shortenText.length - 1] === '.') shortenText = shortenText.slice(0, -1);
-        return shortenText + '...';
+      if (shortenText[shortenText.length - 1] === ".")
+        shortenText = shortenText.slice(0, -1);
+      return shortenText + "...";
     }
     return text;
   }
 
   function editPost() {
-    //TODO
+    if (editIput) setEditIput(false);
+    else setEditIput(true);
   }
 
   function deletePost() {
@@ -67,47 +72,69 @@ export default function Post({ data }) {
 
   function postOptionsBuilder() {
     if (data.userId === userData.id) {
-        return (
-            <Options>
-                <img src={editIcon} alt="Edit" onClick={() => editPost(data.id)}/>
-                <img src={deleteIcon} alt="Delete" onClick={() => deletePost(data.id)}/>
-            </Options>
-            )
+      return (
+        <Options>
+          <img src={editIcon} alt="Edit" onClick={() => editPost(data.id)} />
+          <img
+            src={deleteIcon}
+            alt="Delete"
+            onClick={() => deletePost(data.id)}
+          />
+        </Options>
+      );
     }
   }
 
   const postOptions = postOptionsBuilder();
 
+  function postContentBuilder() {
+    if (editIput) {
+      return <EditPost data={data} setIsActive={setEditIput} />;
+    } else {
+      return (
+        <ReactHashtag
+          renderHashtag={(val) => (
+            <Hashtag
+              key={val}
+              onClick={() => navigate(`/hashtag/${val.replace("#", "")}`)}>
+              {val}
+            </Hashtag>
+          )}>
+          {data.content}
+        </ReactHashtag>
+      );
+    }
+  }
+  const postContent = postContentBuilder();
+
   return (
     <>
-      {deleteModal ? <DeleteModal id={data.id} setIsActive={setDeleteModal}/> : undefined}
+      {deleteModal ? (
+        <DeleteModal id={data.id} setIsActive={setDeleteModal} />
+      ) : undefined}
       <PostItem>
         <Container>
           <UserPicture onClick={redirectToUser} url={data.picture} />
-          <Like postId={data.id}/>
+          <Like postId={data.id} />
         </Container>
         <Container>
           <Head>
-              <UserName onClick={redirectToUser}>
-                {data.username}
-              </UserName>
-              {postOptions}
+            <UserName onClick={redirectToUser}>{data.username}</UserName>
+            {postOptions}
           </Head>
-          <Desc>
-            <ReactHashtag
-              renderHashtag={(val) => (
-                <Hashtag
-                  onClick={() => navigate(`/hashtag/${val.replace("#", "")}`)}>
-                  {val}
-                </Hashtag>
-              )}>
-              {data.content}
-            </ReactHashtag>
-          </Desc>
+          <Desc>{postContent}</Desc>
           <LinkSnippet onClick={() => window.open(data.link, "_blank")}>
             <div>
-              <h2>{metadata?.title && screenWidth <= 600 ? shortenText(metadata?.title, 5) : metadata?.title}</h2>
-              <p>{metadata?.description && screenWidth <= 600 ? shortenText(metadata?.description, 10) : metadata?.description}</p>
+              <h2>
+                {metadata?.title && screenWidth <= 600
+                  ? shortenText(metadata?.title, 5)
+                  : metadata?.title}
+              </h2>
+              <p>
+                {metadata?.description && screenWidth <= 600
+                  ? shortenText(metadata?.description, 10)
+                  : metadata?.description}
+              </p>
               <span>{metadata?.url}</span>
             </div>
             <img
@@ -164,21 +191,23 @@ const Container = styled.div`
 
   @media (max-width: 640px) {
     &:last-child {
-        width: 100%;
+      width: 100%;
     }
   }
 `;
 
 const Head = styled.div`
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
 
-const Hashtag = styled.p`
+const Hashtag = styled.span`
   display: inline;
   color: #fff;
+  font-size: 17px;
+  color: #b7b7b7;
   cursor: pointer;
 `;
 
@@ -198,9 +227,8 @@ const UserPicture = styled.div`
   cursor: pointer;
 `;
 
-const Desc = styled.p`
-  font-size: 17px;
-  color: #b7b7b7;
+const Desc = styled.div`
+  width: 100%;
 `;
 
 const LinkSnippet = styled.div`
@@ -258,48 +286,46 @@ const LinkSnippet = styled.div`
   @media (max-width: 640px) {
     height: 115px;
     width: 100%;
-    
+
     img {
-        min-width: 95px;
-        max-width: 95px;
-        height: 115px;
+      min-width: 95px;
+      max-width: 95px;
+      height: 115px;
     }
 
     p {
-        text-overflow: ellipsis;
-        white-space: normal;
-        font-size: 9px;
+      text-overflow: ellipsis;
+      white-space: normal;
+      font-size: 9px;
     }
-    
+
     span {
-        font-size: 9px;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-        max-width: 150px;
+      font-size: 9px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      max-width: 150px;
     }
 
     h2 {
-        font-size: 11px;
+      font-size: 11px;
     }
-
   }
-
 `;
 
 const Options = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    column-gap: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 10px;
 
-    img {
-        width: 14px;
-        cursor: pointer;
-    }
+  img {
+    width: 14px;
+    cursor: pointer;
+  }
 
-    img:hover {
-        transform: translate(1px, -1px);
-        transition: all .5s ease;
-    }
-`
+  img:hover {
+    transform: translate(1px, -1px);
+    transition: all 0.5s ease;
+  }
+`;
