@@ -3,7 +3,6 @@ import { useEffect, useState, useContext } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
-import dotenv from "dotenv";
 
 import UserContext from "../../../contexts/userContext";
 import PostsContext from "../../../contexts/postsContext";
@@ -12,10 +11,10 @@ import TokenContext from "../../../contexts/tokenContext";
 import PostsList from "../../PostsList";
 import Header from "../../Header";
 
-dotenv.config();
+import config from "../../../config/config.json";
 
 export default function UserPage() {
-  const API = process.env.REACT_APP_API;
+  const API = config.API;
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(true);

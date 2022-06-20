@@ -2,14 +2,13 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
-import dotenv from "dotenv";
 
 import TokenContext from "../../../contexts/tokenContext";
 
-dotenv.config();
+import config from "../../../config/config.json";
 
 export default function TrendingHashtags() {
-  const API = process.env.REACT_APP_API;
+  const API = config.API;
   const [hashtags, setHashtags] = useState([]);
   const { token } = useContext(TokenContext);
   const navigate = useNavigate();

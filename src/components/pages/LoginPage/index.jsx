@@ -2,17 +2,15 @@ import { useState, useContext, useEffect } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import dotenv from "dotenv";
 
 import TokenContext from "../../../contexts/tokenContext";
 
 import ValidateThisEmailAndPass from "../../Resources/ValidateEmailAndPass";
 import Loader from "../../Resources/Loader";
-
-dotenv.config();
+import config from "../../../config/config.json";
 
 export default function LoginPage() {
-  const API = process.env.REACT_APP_API;
+  const API = config.API;
   console.log("🚀 ~ file: index.jsx ~ line 18 ~ LoginPage ~ API", API)
   
   const navigate = useNavigate();

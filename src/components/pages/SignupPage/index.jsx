@@ -2,16 +2,15 @@ import { useState } from "react";
 import { Link, useNavigate } from 'react-router-dom'
 import styled from "styled-components";
 import axios from 'axios'
-import dotenv from "dotenv";
 
 import ValidateThisEmailAndPass from "../../Resources/ValidateEmailAndPass";
 import Loader from "../../Resources/Loader";
 import GetAvatar from "../../Resources/GetAvatar";
 
-dotenv.config();
+import config from "../../../config/config.json";
 
 export default function LoginPage() {
-    const API = process.env.REACT_APP_API
+    const API = config.API;
     const navigate = useNavigate();
     const [data, setData] = useState({ name: null, email: null, password: null, confirmPassword: null, avatar: null });
     const [loading, setLoading] = useState(false);

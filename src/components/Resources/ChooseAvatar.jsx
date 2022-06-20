@@ -1,10 +1,9 @@
 import axios from "axios";
-import dotenv from "dotenv";
 
-dotenv.config();
+import config from "../../config/config.json";
 
 export default function ChooseAvatar(e, token) {
-    const API = process.env.REACT_APP_API;
+    const API = config.API;
     let max_size = 70000; // 70kb
     const file = document.getElementById('change_avatar').files[0];
     const reader = new FileReader();

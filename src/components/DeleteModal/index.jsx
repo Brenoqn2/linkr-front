@@ -1,16 +1,14 @@
 import axios from "axios";
 import styled from "styled-components";
 import { useState, useContext } from "react";
-import dotenv from "dotenv";
 
 import PostsContext from "../../contexts/postsContext";
 
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
-
-dotenv.config();
+import config from "../../config/config.json";
 
 export default function DeleteModal({setIsActive, id}) {
-    const API = process.env.REACT_APP_API;
+    const API = config.API;
     const header = GetTokenAndHeaders("headers");
     const [ loading, setLoading ] = useState(false);
     const { posts, setPosts } = useContext(PostsContext);
