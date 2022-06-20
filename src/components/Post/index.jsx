@@ -230,10 +230,7 @@ const UserPicture = styled.div`
 `;
 
 const Desc = styled.div`
-<<<<<<< HEAD
-=======
   width: 100%;
->>>>>>> main
   font-size: 17px;
   color: #b7b7b7;
 `;
