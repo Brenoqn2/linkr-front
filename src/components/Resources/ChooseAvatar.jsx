@@ -1,9 +1,10 @@
 import axios from "axios";
+import dotenv from "dotenv";
 
-import config from "../../config/config.json";
+dotenv.config();
 
 export default function ChooseAvatar(e, token) {
-
+    const API = process.env.REACT_APP_API;
     let max_size = 70000; // 70kb
     const file = document.getElementById('change_avatar').files[0];
     const reader = new FileReader();
@@ -17,7 +18,7 @@ export default function ChooseAvatar(e, token) {
             },
         };
         
-        axios.put(`${config.API}/change/avatar`, { avatar: reader.result }, header)
+        axios.put(`${API}/change/avatar`, { avatar: reader.result }, header)
             .then(res => {
                 alert('Avatar changed successfully!');
                 window.location.reload();

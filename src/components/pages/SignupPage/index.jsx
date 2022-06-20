@@ -2,16 +2,16 @@ import { useState } from "react";
 import { Link, useNavigate } from 'react-router-dom'
 import styled from "styled-components";
 import axios from 'axios'
+import dotenv from "dotenv";
 
-import TitleAuthentication from "../../Resources/StyleTitleAuthentication.jsx";
 import ValidateThisEmailAndPass from "../../Resources/ValidateEmailAndPass";
 import Loader from "../../Resources/Loader";
 import GetAvatar from "../../Resources/GetAvatar";
 
-import config from "../../../config/config.json";
+dotenv.config();
 
 export default function LoginPage() {
-
+    const API = process.env.REACT_APP_API
     const navigate = useNavigate();
     const [data, setData] = useState({ name: null, email: null, password: null, confirmPassword: null, avatar: null });
     const [loading, setLoading] = useState(false);
@@ -36,7 +36,7 @@ export default function LoginPage() {
                 avatar: data.avatar ? data.avatar : 'https://i.imgur.com/62ufJYt.jpeg'
             };
 
-            axios.post(config.API + '/signup', userData)
+            axios.post(API + '/signup', userData)
                 .then(res => navigate('/'))
                 .catch(err => {
                     alert(`ops !\n\n${err.response.data}`);

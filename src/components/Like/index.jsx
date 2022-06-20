@@ -1,32 +1,37 @@
 import { useState, useContext, useEffect } from "react";
 import styled from "styled-components";
+import dotenv from "dotenv";
 import axios from "axios";
 import ReactTooltip from "react-tooltip";
 
-import config from "../../config/config.json";
-import unlike from "../../assets/images/likeIcon.svg";
-import liked from "../../assets/images/superlike.svg";
 import UserContext from "../../contexts/userContext";
+
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 
+import unlike from "../../assets/images/likeIcon.svg";
+import liked from "../../assets/images/superlike.svg";
+
+dotenv.config();
+
 export default function Like({ postId }) {
-  const { userData } = useContext(UserContext);
-  const header = GetTokenAndHeaders("headers");
+    const API = process.env.REACT_APP_API;
+    const { userData } = useContext(UserContext);
+    const header = GetTokenAndHeaders("headers");
 
-  const [likesData, setData] = useState({
-    postLikesCount: 0,
-    postLiked: false,
-    postUsersLikes: [{ username: "" }],
-  });
+    const [likesData, setData] = useState({
+        postLikesCount: 0,
+        postUsersLikes: [{ username: "" }],
+        postLiked: false,
+    });
 
-  useEffect(() => {
-    axios
-      .get(`${config.API}/likes/${postId}`, header)
-      .then((res) => {
-        //console.log(res.data);
-        // res.data vem isso :
+    useEffect(() => {
 
-        /* 
+        axios.get(`${API}/likes/${postId}`, header).then(res => {
+
+            //console.log(res.data);
+            // res.data vem isso :
+
+            /* 
                 {
                     "postId": "113",
                     "likes": "1",
@@ -68,7 +73,7 @@ export default function Like({ postId }) {
 
     if (userAlreadyLiked) {
       axios
-        .post(`${config.API}/unlike/${postId}`, { userId }, header)
+        .post(`${API}/unlike/${postId}`, { userId }, header)
         .then((res) => {
           setData({
             postLikesCount: likesData.postLikesCount - 1,
@@ -81,7 +86,7 @@ export default function Like({ postId }) {
         .catch((err) => console.log(err));
     } else {
       axios
-        .post(`${config.API}/like/${postId}`, { userId }, header)
+        .post(`${API}/like/${postId}`, { userId }, header)
         .then((res) => {
           setData({
             postLikesCount: likesData.postLikesCount + 1,

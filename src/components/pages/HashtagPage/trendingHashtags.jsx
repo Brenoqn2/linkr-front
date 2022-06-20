@@ -1,15 +1,19 @@
-import styled from "styled-components";
 import { useState, useEffect, useContext } from "react";
-import TokenContext from "../../../contexts/tokenContext";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
+import axios from "axios";
+import dotenv from "dotenv";
+
+import TokenContext from "../../../contexts/tokenContext";
+
+dotenv.config();
 
 export default function TrendingHashtags() {
+  const API = process.env.REACT_APP_API;
   const [hashtags, setHashtags] = useState([]);
   const { token } = useContext(TokenContext);
   const navigate = useNavigate();
   useEffect(() => {
-    const API = "https://linkr-back-brenoqn2.herokuapp.com";
     const config = {
       headers: {
         authorization: `Bearer ${token}`,
