@@ -43,13 +43,9 @@ export default function Post({ data }) {
   }
 
   function redirectToUser() {
-<<<<<<< HEAD
-    navigate(`/users/${data.userId}`, { state: { username: data.username } });
-=======
     navigate(`/users/${data.userId}`, {
       state: { username: data.username },
     });
->>>>>>> main
   }
 
   function shortenText(text, charsMax) {
@@ -100,10 +96,12 @@ export default function Post({ data }) {
           renderHashtag={(val) => (
             <Hashtag
               key={val}
-              onClick={() => navigate(`/hashtag/${val.replace("#", "")}`)}>
+              onClick={() => navigate(`/hashtag/${val.replace("#", "")}`)}
+            >
               {val}
             </Hashtag>
-          )}>
+          )}
+        >
           {data.content}
         </ReactHashtag>
       );
