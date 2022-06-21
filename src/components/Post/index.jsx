@@ -29,6 +29,7 @@ export default function Post({ data }) {
   const [editInput, setEditInput] = useState(false);
   const [content, setContent] = useState(data.content);
   const [comments, setComments] = useState(null);
+  const [openComments, setOpenComments] = useState(false);
   const { userData } = useContext(UserContext);
   const header = GetTokenAndHeaders("headers");
 
@@ -125,9 +126,18 @@ export default function Post({ data }) {
       );
     }
   }
+
+  function commentsBuilder() {
+    if(openComments) {
+      return <Comments comments={comments} setComments={setComments} postId={data.id}/>
+    }
+    return undefined;
+  }
   
   const postOptions = postOptionsBuilder();
   const postContent = postContentBuilder();
+  const commentsElement = commentsBuilder();
+  const postWithCommentsCSS = commentsElement ? 'comments_open' : undefined;
 
   return (
     <>
@@ -136,11 +146,11 @@ export default function Post({ data }) {
       ) : undefined}
 
       <PostItem>
-        <div>
+        <div className={postWithCommentsCSS}>
           <Container>
             <UserPicture onClick={redirectToUser} url={data.picture} />
             <Like postId={data.id} />
-            <CommentsIcon>
+            <CommentsIcon onClick={() => setOpenComments(!openComments)}>
               <img src={commentsIcon} alt="comments" />
               <span>{comments ? `${comments.length} comments` : ''}</span>
             </CommentsIcon>
@@ -173,7 +183,7 @@ export default function Post({ data }) {
             </LinkSnippet>
           </Container>
         </div>
-        <Comments comments={comments} setComments={setComments} postId={data.id}/>
+        {commentsElement}
       </PostItem>
     </>
   );
@@ -196,6 +206,10 @@ const PostItem = styled.li`
     background-color: #171717;
     border-radius: 16px;
     position: relative;
+
+    &.comments_open {
+      border-radius: 16px 16px 0 0 !important;
+    }
     
     @media (max-width: 951px) {
       width: 100%;
