@@ -28,7 +28,8 @@ function InputComment({comments, setComments, postId}) {
     const [ newComment, setNewComment ] = useState('');
     const [ loading, setLoading ] = useState(false);
 
-    function addComment() {
+    function addComment(e) {
+        e.preventDefault();
         setLoading(true);
         axios.post(`${API}/post/${postId}/comments`, {
             postId,
@@ -36,8 +37,8 @@ function InputComment({comments, setComments, postId}) {
             content: newComment
         }, header)
         .then(response => {
-            alert('COMENTARIO ADICIONADO COM SUCESSO');
             setComments([...comments, response.data]);
+            setNewComment('');
         })
         .catch(err => {
             console.log(err);
