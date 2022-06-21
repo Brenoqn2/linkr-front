@@ -11,7 +11,7 @@ import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 
 export default function Comments({comments, setComments, postId}) {
 
-    const commentsComponents = comments?.map(comment => <Comment data={comment}/>)
+    const commentsComponents = comments?.map(comment => <Comment key={comment.id} data={comment}/>)
 
     return (
         <CommentsSection>
@@ -37,7 +37,7 @@ function InputComment({comments, setComments, postId}) {
         }, header)
         .then(response => {
             alert('COMENTARIO ADICIONADO COM SUCESSO');
-            setComments([...comments, response.data])
+            setComments([...comments, response.data]);
         })
         .catch(err => {
             console.log(err);

@@ -68,7 +68,6 @@ export default function Post({ data }) {
       console.log(err);
       alert('Error while recieving comments');
     });
-    console.log(comments);
   }
 
   function shortenText(text, charsMax) {
