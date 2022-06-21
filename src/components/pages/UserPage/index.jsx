@@ -91,7 +91,11 @@ export default function UserPage() {
 
   // userId é o id do usuário
   function ListFollow(userId) {
-    alert(userId);
+
+    const list = followers.join(",");
+
+    alert(`you id: ${userId}\n\n
+    your followers id's: ${list}`);
   }
 
   function Follow(followerId) {
@@ -104,12 +108,18 @@ export default function UserPage() {
       axios.post(`${API}/unfollow/${followerId}`,
         { userId: userData.id }, header).then(res => {
           getFollowers();
+        }).catch(err => {
+          console.log(err);
+          setAble(true);
         })
 
     } else {
       axios.post(`${API}/follow/${followerId}`,
         { userId: userData.id }, header).then(res => {
           getFollowers();
+        }).catch(err => {
+          console.log(err);
+          setAble(true);
         })
     }
   }
