@@ -26,6 +26,7 @@ export default function TimelinePage() {
   const header = GetTokenAndHeaders("headers");
 
   function getUserData() {
+    console.log(header);
     axios
       .get(`${API}/user`, header)
       .then((response) => {
@@ -33,6 +34,7 @@ export default function TimelinePage() {
         getPosts();
       })
       .catch((err) => {
+        console.log('DEU ERRO AQUI !');
         console.log(err);
         alert("Session expired, log in to continue");
         setToken("");
