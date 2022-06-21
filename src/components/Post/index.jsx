@@ -32,35 +32,43 @@ export default function Post({ data }) {
   const { userData } = useContext(UserContext);
   const header = GetTokenAndHeaders("headers");
 
-  // busca os metadados do link
   useEffect(() => {
-    axios
-      .get(`${API}/posts/${data.id}/metadata`, header)
-      .then((response) => {
-        setMetadata(response.data);
-      })
-      .catch((err) => console.log(err));
+    getMetadata();
+    getComments();
   }, [data]);
-
+  
   function addDefaultImg(e) {
     e.target.src = defaultImage;
   }
-
+  
   function redirectToUser() {
     navigate(`/users/${data.userId}`, {
       state: { username: data.username },
     });
   }
-
+  
+  // busca os metadados do link
+  function getMetadata() {
+    axios
+    .get(`${API}/posts/${data.id}/metadata`, header)
+    .then((response) => {
+      setMetadata(response.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
+  
   function getComments() {
-    axios.get(`${API}/post/${data.id}/comments`)
-        .then(response => {
-            setComments(response.data);
-        })
-        .catch(err => {
-            console.log(err);
-            console.log('Error while recieving comments');
-        })
+    axios.get(`${API}/post/${data.id}/comments`, header)
+    .then(response => {
+      setComments(response.data);
+    })
+    .catch(err => {
+      console.log(err);
+      alert('Error while recieving comments');
+    });
+    console.log(comments);
   }
 
   function shortenText(text, charsMax) {
