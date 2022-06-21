@@ -8,6 +8,7 @@ import styled from "styled-components";
 import DeleteModal from "../DeleteModal";
 import EditPost from "../EditPost";
 import Like from "../Like/index";
+import Comments from "../Comments";
 
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 import UserContext from "../../contexts/userContext";
@@ -15,6 +16,7 @@ import UserContext from "../../contexts/userContext";
 import defaultImage from "../../assets/images/defaultImage.jpg";
 import editIcon from "../../assets/images/edit.svg";
 import deleteIcon from "../../assets/images/trash.svg";
+import commentsIcon from "../../assets/images/comments.svg";
 
 import config from "../../config/config.json";
 
@@ -26,26 +28,46 @@ export default function Post({ data }) {
   const [deleteModal, setDeleteModal] = useState(false);
   const [editInput, setEditInput] = useState(false);
   const [content, setContent] = useState(data.content);
+  const [comments, setComments] = useState(null);
+  const [openComments, setOpenComments] = useState(false);
   const { userData } = useContext(UserContext);
   const header = GetTokenAndHeaders("headers");
 
-  // busca os metadados do link
   useEffect(() => {
-    axios
-      .get(`${API}/posts/${data.id}/metadata`, header)
-      .then((response) => {
-        setMetadata(response.data);
-      })
-      .catch((err) => console.log(err));
+    getMetadata();
+    getComments();
   }, [data]);
-
+  
   function addDefaultImg(e) {
     e.target.src = defaultImage;
   }
-
+  
   function redirectToUser() {
     navigate(`/users/${data.userId}`, {
       state: { username: data.username },
+    });
+  }
+  
+  // busca os metadados do link
+  function getMetadata() {
+    axios
+    .get(`${API}/posts/${data.id}/metadata`, header)
+    .then((response) => {
+      setMetadata(response.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
+  
+  function getComments() {
+    axios.get(`${API}/post/${data.id}/comments`, header)
+    .then(response => {
+      setComments(response.data);
+    })
+    .catch(err => {
+      console.log(err);
+      alert('Error while recieving comments');
     });
   }
 
@@ -104,73 +126,100 @@ export default function Post({ data }) {
       );
     }
   }
+
+  function commentsBuilder() {
+    if(openComments) {
+      return <Comments comments={comments} setComments={setComments} postId={data.id}/>
+    }
+    return undefined;
+  }
   
   const postOptions = postOptionsBuilder();
   const postContent = postContentBuilder();
+  const commentsElement = commentsBuilder();
+  const postWithCommentsCSS = commentsElement ? 'comments_open' : undefined;
 
   return (
     <>
       {deleteModal ? (
         <DeleteModal id={data.id} setIsActive={setDeleteModal} />
       ) : undefined}
+
       <PostItem>
-        <Container>
-          <UserPicture onClick={redirectToUser} url={data.picture} />
-          <Like postId={data.id} />
-        </Container>
-        <Container>
-          <Head>
-            <UserName onClick={redirectToUser}>{data.username}</UserName>
-            {postOptions}
-          </Head>
-          <Desc>{postContent}</Desc>
-          <LinkSnippet onClick={() => window.open(data.link, "_blank")}>
-            <div>
-              <h2>
-                {metadata?.title && screenWidth <= 600
-                  ? shortenText(metadata?.title, 5)
-                  : metadata?.title}
-              </h2>
-              <p>
-                {metadata?.description && screenWidth <= 600
-                  ? shortenText(metadata?.description, 10)
-                  : metadata?.description}
-              </p>
-              <span>{metadata?.url}</span>
-            </div>
-            <img
-              onError={addDefaultImg}
-              src={metadata?.image}
-              alt={metadata?.title}
-            />
-          </LinkSnippet>
-        </Container>
+        <div className={postWithCommentsCSS}>
+          <Container>
+            <UserPicture onClick={redirectToUser} url={data.picture} />
+            <Like postId={data.id} />
+            <CommentsIcon onClick={() => setOpenComments(!openComments)}>
+              <img src={commentsIcon} alt="comments" />
+              <span>{comments ? `${comments.length} comments` : ''}</span>
+            </CommentsIcon>
+          </Container>
+          <Container>
+            <Head>
+              <UserName onClick={redirectToUser}>{data.username}</UserName>
+              {postOptions}
+            </Head>
+            <Desc>{postContent}</Desc>
+            <LinkSnippet onClick={() => window.open(data.link, "_blank")}>
+              <div>
+                <h2>
+                  {metadata?.title && screenWidth <= 600
+                    ? shortenText(metadata?.title, 5)
+                    : metadata?.title}
+                </h2>
+                <p>
+                  {metadata?.description && screenWidth <= 600
+                    ? shortenText(metadata?.description, 10)
+                    : metadata?.description}
+                </p>
+                <span>{metadata?.url}</span>
+              </div>
+              <img
+                onError={addDefaultImg}
+                src={metadata?.image}
+                alt={metadata?.title}
+              />
+            </LinkSnippet>
+          </Container>
+        </div>
+        {commentsElement}
       </PostItem>
     </>
   );
 }
 
 const PostItem = styled.li`
-  width: 95%;
-  height: 276px;
-  padding: 20px 20px 20px 20px;
-
   display: flex;
-  column-gap: 20px;
+  flex-direction: column;
   justify-content: flex-start;
 
-  background-color: #171717;
-  border-radius: 16px;
-  position: relative;
+  & > div {
+    width: 95%;
+    height: 276px;
+    padding: 20px 20px 20px 20px;
+    
+    display: flex;
+    column-gap: 20px;
+    justify-content: flex-start;
+    
+    background-color: #171717;
+    border-radius: 16px;
+    position: relative;
 
-  @media (max-width: 951px) {
-    width: 100%;
+    &.comments_open {
+      border-radius: 16px 16px 0 0 !important;
+    }
+    
+    @media (max-width: 951px) {
+      width: 100%;
+    }
+    
+    @media (max-width: 640px) {
+      border-radius: 0;
+    }
   }
-
-  @media (max-width: 640px) {
-    border-radius: 0;
-  }
-`;
+`
 
 const Container = styled.div`
   min-height: 100%;
@@ -331,4 +380,23 @@ const Options = styled.div`
     transform: translate(1px, -1px);
     transition: all 0.5s ease;
   }
+`;
+
+const CommentsIcon = styled.div`
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+row-gap: 10px;
+cursor: pointer;
+
+img {
+  width: 20px;
+}
+
+span {
+  font-size: 11px;
+  color: #fff;
+  width: max-content;
+}
 `;
