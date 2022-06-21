@@ -6,32 +6,31 @@ import styled from "styled-components";
 
 import UserContext from "../../../contexts/userContext";
 import PostsContext from "../../../contexts/postsContext";
-import TokenContext from "../../../contexts/tokenContext";
 
 import PostsList from "../../PostsList";
 import Header from "../../Header";
 
 import config from "../../../config/config.json";
+import GetTokenAndHeaders from "../../Resources/GetTokenAndHeaders";
+import Loader from "../../Resources/LoaderFollowBtn";
 
 export default function UserPage() {
+
+  const { id } = useParams();
   const API = config.API;
+
   const navigate = useNavigate();
   const location = useLocation();
+
   const [loading, setLoading] = useState(true);
   const { posts, setPosts } = useContext(PostsContext);
-  const { token, setToken } = useContext(TokenContext);
   const { userData, setUserData } = useContext(UserContext);
-  const { id } = useParams();
+  const [followers, setFollowers] = useState([]);
+  const [able, setAble] = useState(false);
+
+  const header = GetTokenAndHeaders("headers");
 
   function getUserData() {
-    const header = {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    };
-
-    console.log(header);
-
     axios
       .get(`${API}/user`, header)
       .then((response) => {
@@ -41,23 +40,18 @@ export default function UserPage() {
       .catch((err) => {
         console.log(err);
         alert("Session expired, log in to continue");
-        setToken("");
+        localStorage.removeItem("token");
         navigate("/");
       });
   }
 
   function getPosts() {
     setLoading(true);
-    const header = {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    };
-
     axios
       .get(`${API}/users/${id}`, header)
       .then((response) => {
         setPosts(response.data);
+
       })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
@@ -66,6 +60,7 @@ export default function UserPage() {
   useEffect(() => {
     setLoading(true);
     getUserData();
+    getFollowers();
   }, [id]);
 
   const postsList = posts?.length ? (
@@ -81,12 +76,53 @@ export default function UserPage() {
     </LoadingContainer>
   );
 
+  const isUser = id == userData.id; // ( não mudar a comparação pois são tipos diferentes )
+  let isFollow = followers.includes(userData.id);
+  const options = isUser ? 'My Followers' : isFollow ? 'Unfollow' : 'Follow';
+
+  function getFollowers() {
+
+    axios.get(`${config.API_LOCAL}/followers/${id}`, header).then(res => {
+      const followersList = res.data.map(follower => follower.followerId);
+      setFollowers(followersList);
+      setAble(true);
+    })
+  }
+
+  // userId é o id do usuário
+  function ListFollow(userId) {
+    alert(userId);
+  }
+
+  function Follow(followerId) {
+
+    // followerId = quem está seguindo
+    // followingId = quem está sendo seguido
+    setAble(false);
+
+    if (isFollow) {
+      axios.post(`${config.API_LOCAL}/unfollow/${followerId}`,
+        { userId: userData.id }, header).then(res => {
+          getFollowers();
+        })
+
+    } else {
+      axios.post(`${config.API_LOCAL}/follow/${followerId}`,
+        { userId: userData.id }, header).then(res => {
+          getFollowers();
+        })
+    }
+  }
+
   return (
     <UserPageContainer>
       <Header profilePic={userData?.picture} username={userData?.username} />
 
       <Main>
-        <h1>{`${location.state?.username || userData?.username}'s posts`}</h1>
+        <div className="follow-btn">
+          <h1>{`${location.state?.username || userData?.username}'s posts`}</h1>
+          <button onClick={() => isUser ? ListFollow(userData.id) : Follow(id)} >{able ? options : Loader}</button>
+        </div>
         <Content>
           <PostsContent>{loading ? loadingElement : postsList}</PostsContent>
           <TrendingsContent></TrendingsContent>
@@ -178,6 +214,30 @@ const Main = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+
+  .follow-btn {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 1%;
+      width: 90px;
+      height: 35px;
+      padding: 10px 0;
+      background: #1877f2;
+      border-radius: 5px;
+      border: none;
+      font-weight: 700;
+      font-size: 13px;
+      line-height: 16px;
+      text-align: center;
+      color: #ffffff;
+      cursor: pointer;
+    }
+  }
 
   @media (max-width: 640px) {
     width: 100%;
