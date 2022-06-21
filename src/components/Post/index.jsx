@@ -143,7 +143,7 @@ export default function Post({ data }) {
             <Like postId={data.id} />
             <CommentsIcon>
               <img src={commentsIcon} alt="comments" />
-              <span>3 comments</span>
+              <span>{comments ? `${comments.length} comments` : ''}</span>
             </CommentsIcon>
           </Container>
           <Container>
