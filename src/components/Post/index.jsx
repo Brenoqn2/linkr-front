@@ -166,7 +166,7 @@ export default function Post({ data }) {
             </LinkSnippet>
           </Container>
         </div>
-        <Comments comments={comments}/>
+        <Comments comments={comments} setComments={setComments} postId={data.id}/>
       </PostItem>
     </>
   );

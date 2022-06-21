@@ -7,28 +7,61 @@ import UserContext from "../../contexts/userContext";
 import planeIcon from "../../assets/images/plane.svg";
 
 import config from "../../config/config.json";
+import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 
-export default function Comments({comments}) {
+export default function Comments({comments, setComments, postId}) {
 
     return (
         <CommentsSection>
-            <InputComment />
+            <InputComment comments={comments} setComments={setComments} postId={postId} />
         </CommentsSection>
     )
 }
 
-function InputComment() {
+function InputComment({comments, setComments, postId}) {
+    const API = config.API;
+    const header = GetTokenAndHeaders('headers');
     const { userData } = useContext(UserContext);
+    const [ newComment, setNewComment ] = useState('');
+    const [ loading, setLoading ] = useState(false);
+
+    function addComment() {
+        setLoading(true);
+        axios.post(`${API}/post/${postId}/comments`, {
+            postId,
+            userId: userData.id,
+            content: newComment
+        }, header)
+        .then(response => {
+            alert('COMENTARIO ADICIONADO COM SUCESSO');
+        })
+        .catch(err => {
+            console.log(err);
+            alert('Error while trying to add comment');
+        })
+        .finally(() => setLoading(false))
+    }
+
+    const disabledCSS = loading ? 'disabled' : undefined;
 
     return (
         <CreateComment>
             <img src={userData.picture} alt={userData.username} />
-            <div>
-                <input type="text" placeholder="write a comment..."/>
-                <button>
+            <form onSubmit={addComment}>
+                <input 
+                type="text" 
+                placeholder="write a comment..."
+                className={disabledCSS} 
+                value={newComment}
+                disabled={loading}
+                onChange={e => {
+                    setNewComment(e.target.value);
+                }}/>
+                <button type="submit" className={disabledCSS}>
                     <img src={planeIcon} alt="Send" />
                 </button>
-            </div>
+            </form>
+            
         </CreateComment>
     )
 }
@@ -54,13 +87,17 @@ const CreateComment = styled.div`
     align-items: center;
     column-gap: 20px;
 
+    .disabled {
+        opacity: .5;
+    }
+
     img {
         width: 39px;
         height: 39px;
         border-radius: 50%;
     }
     
-    div {
+    form {
         width: 90%;
         height: 39px;
         border-radius: 8px;
@@ -76,10 +113,15 @@ const CreateComment = styled.div`
             border-radius: 8px 0 0 8px;
             border: none;
             background-color: #252525;
+            outline: none;
 
+            color: #fff;
             font-size: 14px;
-            color: #575757;
             padding-left: 10px;
+        }
+        
+        input::placeholder {
+            color: #575757;
         }
 
         button {
