@@ -108,7 +108,7 @@ export default function Like({ postId }) {
   }
 
   // pega o nome de todos usuarios que curtiram o post e junta numa string separando por \n
-
+  console.log(likesData.postUsersLikes);
   return (
     <SuperLike>
       <img
@@ -129,16 +129,28 @@ export default function Like({ postId }) {
         effect="solid"
         type="light"
         getContent={() => {
-          if (likesData.postUsersLikes.length > 2) {
-            return `${likesData.postUsersLikes[0].username}, ${
-              likesData.postUsersLikes[1].username
-            } e outras ${likesData.postLikesCount - 2} pessoas curtiram`;
-          } else if (likesData.postUsersLikes.length > 1) {
-            return `${likesData.postUsersLikes[0].username} e ${likesData.postUsersLikes[1].username} curtiram`;
-          } else if (likesData.postUsersLikes.length === 1) {
-            return `${likesData.postUsersLikes[0].username} curtiu`;
+          if (likedByUser) {
+            if (likesData.postUsersLikes.length > 2) {
+              return `Você, ${
+                likesData.postUsersLikes[0].username
+              } e outra(s) ${likesData.postLikesCount - 2} pessoa(s) curtiram`;
+            } else if (likesData.postUsersLikes.length > 1) {
+              return `Você e ${likesData.postUsersLikes[0].username} curtiram`;
+            } else if (likesData.postUsersLikes.length === 1) {
+              return `Você curtiu`;
+            }
           } else {
-            return "Ninguém curtiu";
+            if (likesData.postUsersLikes.length > 2) {
+              return `${likesData.postUsersLikes[0].username}, ${
+                likesData.postUsersLikes[1].username
+              } e outra(s) ${likesData.postLikesCount - 2} pessoa(s) curtiram`;
+            } else if (likesData.postUsersLikes.length > 1) {
+              return `${likesData.postUsersLikes[0].username} e ${likesData.postUsersLikes[1].username} curtiram`;
+            } else if (likesData.postUsersLikes.length === 1) {
+              return `${likesData.postUsersLikes[0].username} curtiu`;
+            } else {
+              return "Ninguém curtiu";
+            }
           }
         }}
       />
