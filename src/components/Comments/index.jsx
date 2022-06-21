@@ -72,12 +72,22 @@ function InputComment({comments, setComments, postId}) {
 }
 
 function Comment({data}) {
+    let username;
+    
+    if(data.isAuthor) {
+        username = <span>{data.username} <Title> • post’s author</Title></span>;
+    } else if(data?.isFollower) {
+        //TODO
+    } else {
+        username = <span>{data.username}</span>
+    }
+
     return (
         <CommentContainer>
             <img src={data.picture} alt={data.username}/> 
             <div>
                 <div>
-                    <span>{data.username}</span>
+                    {username}
                 </div>
                 <p>
                     {data.content}
@@ -207,4 +217,9 @@ const CommentContainer = styled.ul`
     p {
         color: #ACACAC;
     }
+`
+
+const Title = styled.span`
+    color: #565656 !important;
+
 `
