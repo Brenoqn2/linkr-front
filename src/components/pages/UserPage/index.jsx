@@ -82,7 +82,7 @@ export default function UserPage() {
 
   function getFollowers() {
 
-    axios.get(`${config.API_LOCAL}/followers/${id}`, header).then(res => {
+    axios.get(`${API}/followers/${id}`, header).then(res => {
       const followersList = res.data.map(follower => follower.followerId);
       setFollowers(followersList);
       setAble(true);
@@ -101,13 +101,13 @@ export default function UserPage() {
     setAble(false);
 
     if (isFollow) {
-      axios.post(`${config.API_LOCAL}/unfollow/${followerId}`,
+      axios.post(`${API}/unfollow/${followerId}`,
         { userId: userData.id }, header).then(res => {
           getFollowers();
         })
 
     } else {
-      axios.post(`${config.API_LOCAL}/follow/${followerId}`,
+      axios.post(`${API}/follow/${followerId}`,
         { userId: userData.id }, header).then(res => {
           getFollowers();
         })
