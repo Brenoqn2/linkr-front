@@ -1,67 +1,61 @@
 import axios from "axios";
-import { useEffect, useState, useContext } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useEffect, useState, useContext, useCallback } from "react";
+import { useParams, useLocation } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
 
 import UserContext from "../../../contexts/userContext";
-import PostsContext from "../../../contexts/postsContext";
 
 import PostsList from "../../PostsList";
 import Header from "../../Header";
+import TrendingHashtags from "../HashtagPage/trendingHashtags";
 
 import config from "../../../config/config.json";
 import GetTokenAndHeaders from "../../Resources/GetTokenAndHeaders";
 import Loader from "../../Resources/LoaderFollowBtn";
 
 export default function UserPage() {
-
   const { id } = useParams();
   const API = config.API;
 
-  const navigate = useNavigate();
   const location = useLocation();
 
   const [loading, setLoading] = useState(true);
-  const { posts, setPosts } = useContext(PostsContext);
-  const { userData, setUserData } = useContext(UserContext);
+  const [posts, setPosts] = useState(null);
+  const { userData } = useContext(UserContext);
   const [followers, setFollowers] = useState([]);
   const [able, setAble] = useState(false);
 
   const header = GetTokenAndHeaders("headers");
 
-  function getUserData() {
-    axios
-      .get(`${API}/user`, header)
-      .then((response) => {
-        setUserData({ ...response.data });
-        getPosts();
-      })
-      .catch((err) => {
-        console.log(err);
-        alert("Session expired, log in to continue");
-        localStorage.removeItem("token");
-        navigate("/");
-      });
-  }
+  const getFollowers = useCallback(() => {
+    axios.get(`${API}/followers/${id}`, header).then((res) => {
+      const followersList = res.data.map((follower) => follower.followerId);
+      setFollowers(followersList);
+      setAble(true);
+    });
+  }, [API, header, id]);
 
-  function getPosts() {
+  const getPosts = useCallback(() => {
     setLoading(true);
     axios
       .get(`${API}/users/${id}`, header)
       .then((response) => {
         setPosts(response.data);
-
       })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
-  }
+  }, [API, id, header, setPosts]);
 
   useEffect(() => {
-    setLoading(true);
-    getUserData();
-    getFollowers();
-  }, [id]);
+    console.log("useeffect do userpage");
+    if (posts === null) {
+      console.log("to aqui ");
+      setLoading(true);
+      getFollowers();
+      getPosts();
+    }
+  }, [getFollowers, getPosts, posts, followers]);
 
   const postsList = posts?.length ? (
     <PostsList posts={posts}></PostsList>
@@ -76,22 +70,12 @@ export default function UserPage() {
     </LoadingContainer>
   );
 
-  const isUser = id == userData.id; // ( não mudar a comparação pois são tipos diferentes )
+  const isUser = Number(id) === Number(userData.id);
   let isFollow = followers.includes(userData.id);
-  const options = isUser ? 'My Followers' : isFollow ? 'Unfollow' : 'Follow';
-
-  function getFollowers() {
-
-    axios.get(`${API}/followers/${id}`, header).then(res => {
-      const followersList = res.data.map(follower => follower.followerId);
-      setFollowers(followersList);
-      setAble(true);
-    })
-  }
+  const options = isUser ? "My Followers" : isFollow ? "Unfollow" : "Follow";
 
   // userId é o id do usuário
   function ListFollow(userId) {
-
     const list = followers.join(",");
 
     alert(`you id: ${userId}\n\n
@@ -99,28 +83,30 @@ export default function UserPage() {
   }
 
   function Follow(followerId) {
-
     // followerId = quem está seguindo
     // followingId = quem está sendo seguido
     setAble(false);
 
     if (isFollow) {
-      axios.post(`${API}/unfollow/${followerId}`,
-        { userId: userData.id }, header).then(res => {
+      axios
+        .post(`${API}/unfollow/${followerId}`, { userId: userData.id }, header)
+        .then((res) => {
           getFollowers();
-        }).catch(err => {
+        })
+        .catch((err) => {
           console.log(err);
           setAble(true);
-        })
-
+        });
     } else {
-      axios.post(`${API}/follow/${followerId}`,
-        { userId: userData.id }, header).then(res => {
+      axios
+        .post(`${API}/follow/${followerId}`, { userId: userData.id }, header)
+        .then((res) => {
           getFollowers();
-        }).catch(err => {
+        })
+        .catch((err) => {
           console.log(err);
           setAble(true);
-        })
+        });
     }
   }
 
@@ -131,11 +117,15 @@ export default function UserPage() {
       <Main>
         <div className="follow-btn">
           <h1>{`${location.state?.username || userData?.username}'s posts`}</h1>
-          <button onClick={() => isUser ? ListFollow(userData.id) : Follow(id)} >{able ? options : Loader}</button>
+          <button
+            onClick={() => (isUser ? ListFollow(userData.id) : Follow(id))}
+          >
+            {able ? options : Loader}
+          </button>
         </div>
         <Content>
           <PostsContent>{loading ? loadingElement : postsList}</PostsContent>
-          <TrendingsContent></TrendingsContent>
+          <TrendingHashtags></TrendingHashtags>
         </Content>
       </Main>
     </UserPageContainer>
@@ -271,14 +261,4 @@ const PostsContent = styled.div`
   justify-content: flex-start;
   align-items: flex-start;
   width: 100%;
-`;
-
-const TrendingsContent = styled.div`
-  width: 301px;
-  height: 406px;
-  background-color: #171717;
-  border-radius: 16px;
-  @media (max-width: 951px) {
-    display: none;
-  }
 `;

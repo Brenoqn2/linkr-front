@@ -34,7 +34,7 @@ export default function TimelinePage() {
         getPosts();
       })
       .catch((err) => {
-        console.log('DEU ERRO AQUI !');
+        console.log("DEU ERRO AQUI !");
         console.log(err);
         alert("Session expired, log in to continue");
         setToken("");
@@ -194,14 +194,4 @@ const PostsContent = styled.div`
   justify-content: flex-start;
   align-items: flex-start;
   width: 100%;
-`;
-
-const TrendingsContent = styled.div`
-  width: 301px;
-  height: 406px;
-  background-color: #171717;
-  border-radius: 16px;
-  @media (max-width: 951px) {
-    display: none;
-  }
 `;

@@ -6,7 +6,6 @@ import styled from "styled-components";
 
 import UserContext from "../../../contexts/userContext";
 import TokenContext from "../../../contexts/tokenContext";
-import PostsContext from "../../../contexts/postsContext";
 
 import TrendingHashtags from "./trendingHashtags";
 import PostsList from "../../PostsList";
@@ -18,7 +17,7 @@ import config from "../../../config/config.json";
 export default function HashtagPage() {
   const API = config.API;
   const navigate = useNavigate();
-  const { posts, setPosts } = useContext(PostsContext);
+  const [posts, setPosts] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const { userData } = useContext(UserContext);
