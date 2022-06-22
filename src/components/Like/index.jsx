@@ -19,19 +19,20 @@ export default function Like({ postId }) {
   const [likesData, setData] = useState({
     postLikesCount: 0,
     postUsersLikes: [{ username: "" }],
-    postLiked: false,
+    postLiked: "firstReq",
   });
 
   const [likedByUser, setLikedByUser] = useState("");
 
   useEffect(() => {
-    axios
-      .get(`${API}/likes/${postId}`, header)
-      .then((res) => {
-        //console.log(res.data);
-        // res.data vem isso :
+    if (likesData.postLiked === "firstReq") {
+      axios
+        .get(`${API}/likes/${postId}`, header)
+        .then((res) => {
+          //console.log(res.data);
+          // res.data vem isso :
 
-        /* 
+          /* 
                 {
                     "postId": "113",
                     "likes": "1",
@@ -44,30 +45,38 @@ export default function Like({ postId }) {
                 }
             */
 
-        // faz um map para pegar o username e o userId
-        const users = res.data.users.map((user) => {
-          return {
-            userId: user.userId,
-            username: user.username,
-          };
-        });
+          // faz um map para pegar o username e o userId
+          const users = res.data.users.map((user) => {
+            return {
+              userId: user.userId,
+              username: user.username,
+            };
+          });
 
-        setData({
-          postLikesCount: res.data.likes,
-          postUsersLikes: users,
-          postLiked:
-            res.data.users.map((user) => user.userId === userData.id).length >
-            0,
-        });
+          setData({
+            postLikesCount: res.data.likes,
+            postUsersLikes: users,
+            postLiked:
+              res.data.users.map((user) => user.userId === userData.id).length >
+              0,
+          });
 
-        setLikedByUser(
-          res.data.users.find((user) => user.userId === userData.id)
-        );
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [postId, header, userData.id]);
+          setLikedByUser(
+            res.data.users.find((user) => user.userId === userData.id)
+          );
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [
+    postId,
+    header,
+    userData.id,
+    API,
+    likesData.firstReq,
+    likesData.postLiked,
+  ]);
 
   function LikeThis(userId, postId) {
     // verificar se o userId já curtiu o post

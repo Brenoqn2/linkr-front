@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useViewportWidth } from "../../hooks/useViewportWidth";
 import ReactHashtag from "@mdnm/react-hashtag";
@@ -33,41 +33,44 @@ export default function Post({ data }) {
   const { userData } = useContext(UserContext);
   const header = GetTokenAndHeaders("headers");
 
+  const getMetadata = useCallback(() => {
+    axios
+      .get(`${API}/posts/${data.id}/metadata`, header)
+      .then((response) => {
+        setMetadata(response.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [API, data, header]);
+
+  const getComments = useCallback(() => {
+    axios
+      .get(`${API}/post/${data.id}/comments`, header)
+      .then((response) => {
+        setComments(response.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Error while recieving comments");
+      });
+  }, [API, data, header]);
+
   useEffect(() => {
-    getMetadata();
-    getComments();
-  }, [data]);
-  
+    console.log("useeffect do post");
+    if (metadata === null && comments === null) {
+      getMetadata();
+      getComments();
+    }
+  }, [data, getMetadata, getComments, metadata, comments]);
+
   function addDefaultImg(e) {
     e.target.src = defaultImage;
   }
-  
+
   function redirectToUser() {
     navigate(`/users/${data.userId}`, {
       state: { username: data.username },
-    });
-  }
-  
-  // busca os metadados do link
-  function getMetadata() {
-    axios
-    .get(`${API}/posts/${data.id}/metadata`, header)
-    .then((response) => {
-      setMetadata(response.data);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-  }
-  
-  function getComments() {
-    axios.get(`${API}/post/${data.id}/comments`, header)
-    .then(response => {
-      setComments(response.data);
-    })
-    .catch(err => {
-      console.log(err);
-      alert('Error while recieving comments');
     });
   }
 
@@ -84,8 +87,9 @@ export default function Post({ data }) {
     return text;
   }
 
-  function editPost() { // setEditIput(!editIput)
-    setEditInput(!editInput)
+  function editPost() {
+    // setEditIput(!editIput)
+    setEditInput(!editInput);
   }
 
   function deletePost() {
@@ -109,7 +113,14 @@ export default function Post({ data }) {
 
   function postContentBuilder() {
     if (editInput) {
-      return <EditPost data={data} setIsActive={setEditInput} content={content} setContent={setContent} />;
+      return (
+        <EditPost
+          data={data}
+          setIsActive={setEditInput}
+          content={content}
+          setContent={setContent}
+        />
+      );
     } else {
       return (
         <ReactHashtag
@@ -120,7 +131,8 @@ export default function Post({ data }) {
             >
               {val}
             </Hashtag>
-          )}>
+          )}
+        >
           {content}
         </ReactHashtag>
       );
@@ -128,16 +140,22 @@ export default function Post({ data }) {
   }
 
   function commentsBuilder() {
-    if(openComments) {
-      return <Comments comments={comments} setComments={setComments} postId={data.id}/>
+    if (openComments) {
+      return (
+        <Comments
+          comments={comments}
+          setComments={setComments}
+          postId={data.id}
+        />
+      );
     }
     return undefined;
   }
-  
+
   const postOptions = postOptionsBuilder();
   const postContent = postContentBuilder();
   const commentsElement = commentsBuilder();
-  const postWithCommentsCSS = commentsElement ? 'comments_open' : undefined;
+  const postWithCommentsCSS = commentsElement ? "comments_open" : undefined;
 
   return (
     <>
@@ -152,7 +170,7 @@ export default function Post({ data }) {
             <Like postId={data.id} />
             <CommentsIcon onClick={() => setOpenComments(!openComments)}>
               <img src={commentsIcon} alt="comments" />
-              <span>{comments ? `${comments.length} comments` : ''}</span>
+              <span>{comments ? `${comments.length} comments` : ""}</span>
             </CommentsIcon>
           </Container>
           <Container>
@@ -198,11 +216,11 @@ const PostItem = styled.li`
     width: 95%;
     height: 276px;
     padding: 20px 20px 20px 20px;
-    
+
     display: flex;
     column-gap: 20px;
     justify-content: flex-start;
-    
+
     background-color: #171717;
     border-radius: 16px;
     position: relative;
@@ -210,16 +228,16 @@ const PostItem = styled.li`
     &.comments_open {
       border-radius: 16px 16px 0 0 !important;
     }
-    
+
     @media (max-width: 951px) {
       width: 100%;
     }
-    
+
     @media (max-width: 640px) {
       border-radius: 0;
     }
   }
-`
+`;
 
 const Container = styled.div`
   min-height: 100%;
@@ -383,20 +401,20 @@ const Options = styled.div`
 `;
 
 const CommentsIcon = styled.div`
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-row-gap: 10px;
-cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 10px;
+  cursor: pointer;
 
-img {
-  width: 20px;
-}
+  img {
+    width: 20px;
+  }
 
-span {
-  font-size: 11px;
-  color: #fff;
-  width: max-content;
-}
+  span {
+    font-size: 11px;
+    color: #fff;
+    width: max-content;
+  }
 `;

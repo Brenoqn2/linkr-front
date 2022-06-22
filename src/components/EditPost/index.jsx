@@ -16,11 +16,14 @@ export default function EditPost({ setIsActive, data, content, setContent }) {
 
   const inputRef = useRef(null);
 
-  const escFunction = useCallback((event) => {
-    if (event.keyCode === 27) {
-      setIsActive(false);
-    }
-  }, []);
+  const escFunction = useCallback(
+    (event) => {
+      if (event.keyCode === 27) {
+        setIsActive(false);
+      }
+    },
+    [setIsActive]
+  );
 
   useEffect(() => {
     inputRef.current.focus();
@@ -69,7 +72,8 @@ export default function EditPost({ setIsActive, data, content, setContent }) {
           onChange={handleChange}
           value={formData.content}
           disabled
-          type="text"></Input>
+          type="text"
+        ></Input>
       </form>
     );
   else
@@ -80,7 +84,8 @@ export default function EditPost({ setIsActive, data, content, setContent }) {
           name="content"
           onChange={handleChange}
           value={formData.content}
-          type="text"></Input>
+          type="text"
+        ></Input>
       </form>
     );
 }
