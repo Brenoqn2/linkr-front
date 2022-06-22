@@ -91,7 +91,7 @@ function Comment({ data }) {
         {data.username} <Title> • post’s author</Title>
       </span>
     );
-  } else if (userData.followingIds.some(followingId => followingId == data.userId)) {
+  } else if (userData.followingIds?.some(followingId => followingId == data.userId)) {
     username = (
         <span>
           {data.username} <Title> • following</Title>
