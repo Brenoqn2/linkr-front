@@ -1,12 +1,11 @@
 import axios from "axios";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
 
 import UserContext from "../../../contexts/userContext";
 import TokenContext from "../../../contexts/tokenContext";
-import PostsContext from "../../../contexts/postsContext";
 
 import TrendingHashtags from "./trendingHashtags";
 import PostsList from "../../PostsList";
@@ -15,24 +14,23 @@ import Header from "../../Header";
 import GetTokenAndHeaders from "../../Resources/GetTokenAndHeaders";
 import config from "../../../config/config.json";
 
-
 export default function HashtagPage() {
   const API = config.API;
   const navigate = useNavigate();
-  const { posts, setPosts } = useContext(PostsContext);
+  const [posts, setPosts] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const { userData, setUserData } = useContext(UserContext);
+  const { userData } = useContext(UserContext);
   const { setToken } = useContext(TokenContext);
   const { hashtag } = useParams();
   const header = GetTokenAndHeaders("headers");
 
-  function getUserData() {
+  const getPosts = useCallback(() => {
     axios
-      .get(`${API}/user`, header)
+      .get(`${API}/hashtag/${hashtag.toLowerCase()}`, header)
       .then((response) => {
-        setUserData({ ...response.data });
-        getPosts();
+        setPosts(response.data);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
@@ -40,22 +38,15 @@ export default function HashtagPage() {
         setToken("");
         navigate("/");
       });
-  }
-
-  function getPosts() {
-    axios
-      .get(`${API}/hashtag/${hashtag.toLowerCase()}`, header)
-      .then((response) => {
-        setPosts(response.data);
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setLoading(false));
-  }
+  }, [API, header, hashtag, navigate, setPosts, setToken]);
 
   useEffect(() => {
-    setLoading(true);
-    getUserData();
-  }, [hashtag]);
+    console.log("useeffect do hashtagpage");
+    if (posts === null) {
+      setLoading(true);
+      getPosts();
+    }
+  }, [getPosts, posts]);
 
   const postsList = posts?.length ? (
     <PostsList posts={posts}></PostsList>

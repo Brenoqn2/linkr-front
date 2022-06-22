@@ -1,13 +1,13 @@
-import styled from "styled-components"
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { useState, useContext, useEffect } from "react";
+import styled from "styled-components";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useState, useContext, useEffect, useCallback } from "react";
 import { DebounceInput } from "react-debounce-input";
-import dotenv from "dotenv";
 
 import ResultItem from "../ResultItem";
 
 import TokenContext from "../../contexts/tokenContext";
+import UserContext from "../../contexts/userContext";
 
 import ChooseAvatar from "../Resources/ChooseAvatar";
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
@@ -18,40 +18,62 @@ import arrow from "../../assets/images/arrow.svg";
 import search from "../../assets/images/search.svg";
 
 export default function Header({ profilePic, username }) {
-    const API = config.API;
-    const navigate = useNavigate();
-    const { setToken } = useContext(TokenContext);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [ searchInput, setSearchInput ] = useState(null);
-    const [searchResult, setSearchResult ] = useState([]);
-    const token = GetTokenAndHeaders("token");
-    const header = GetTokenAndHeaders("headers");
+  const API = config.API;
+  const navigate = useNavigate();
+  const { setToken } = useContext(TokenContext);
+  const { userData, setUserData } = useContext(UserContext);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchInput, setSearchInput] = useState(null);
+  const [searchResult, setSearchResult] = useState([]);
+  const token = GetTokenAndHeaders("token");
+  const header = GetTokenAndHeaders("headers");
 
-    function getSearchResult() {
-        axios.get(`${API}/users?name=${searchInput}`, header)
-        .then(response => setSearchResult(response.data))
-        .catch(err => console.log(err));
-    }
+  const getUserData = useCallback(() => {
+    axios
+      .get(`${API}/user`, header)
+      .then((response) => {
+        setUserData({ ...response.data });
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Session expired, log in to continue");
+        setToken("");
+        navigate("/");
+      });
+  }, [API, header, navigate, setToken, setUserData]);
 
-    function toggleMenu() {
-        setIsMenuOpen(!isMenuOpen)
-    }
+  const getSearchResult = useCallback(() => {
+    axios
+      .get(`${API}/users?name=${searchInput}`, header)
+      .then((response) => setSearchResult(response.data))
+      .catch((err) => console.log(err));
+  }, [API, header, searchInput]);
 
-    function Logout() {
-        axios.post(`${API}/logout`, {}, header)
-            .then(res => {
-                setToken('');
-                navigate('/');
-                alert('bye bye!');
-            }).catch(err => {
-                alert('Logout not completed!');
-            });
-    }
+  function toggleMenu() {
+    setIsMenuOpen(!isMenuOpen);
+  }
+
+  function Logout() {
+    axios
+      .post(`${API}/logout`, {}, header)
+      .then((res) => {
+        setToken("");
+        navigate("/");
+        alert("bye bye!");
+      })
+      .catch((err) => {
+        alert("Logout not completed!");
+      });
+  }
 
   useEffect(() => {
+    if (userData === null) {
+      getUserData();
+    }
+    console.log("useeffect do header");
     if (!searchInput) return;
     getSearchResult();
-  }, [searchInput]);
+  }, [searchInput, getSearchResult, getUserData, userData]);
 
   const result = searchResult.map((user) => (
     <ResultItem data={user} key={user.id}></ResultItem>

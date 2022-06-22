@@ -11,8 +11,8 @@ import config from "../../../config/config.json";
 
 export default function LoginPage() {
   const API = config.API;
-  console.log("🚀 ~ file: index.jsx ~ line 18 ~ LoginPage ~ API", API)
-  
+  console.log("🚀 ~ file: index.jsx ~ line 18 ~ LoginPage ~ API", API);
+
   const navigate = useNavigate();
   const [data, setData] = useState({ email: null, password: null });
   const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ export default function LoginPage() {
     if (token) {
       navigate("/timeline");
     }
-  }, []);
+  }, [token, navigate]);
 
   function HandleSubmit(e) {
     e.preventDefault();
@@ -50,24 +50,28 @@ export default function LoginPage() {
     <PageContainer>
       <LeftContainer>
         <h1>linkr</h1>
-        <h2>save, share and discover<br />the best links on the web</h2>
+        <h2>
+          save, share and discover
+          <br />
+          the best links on the web
+        </h2>
       </LeftContainer>
       <RightContainer>
         <form onSubmit={HandleSubmit}>
-            <input
-              type="text"
-              placeholder="email"
-              required
-              onChange={(e) => setData({ ...data, email: e.target.value })}
-            />
-            <input
-              type="password"
-              placeholder="password"
-              required
-              onChange={(e) => setData({ ...data, password: e.target.value })}
-            />
-            {loading ? Loader : <button type="submit">Sign In</button>}
-            <Link to="/sign-up">First time? Create an account!</Link>
+          <input
+            type="text"
+            placeholder="email"
+            required
+            onChange={(e) => setData({ ...data, email: e.target.value })}
+          />
+          <input
+            type="password"
+            placeholder="password"
+            required
+            onChange={(e) => setData({ ...data, password: e.target.value })}
+          />
+          {loading ? Loader : <button type="submit">Sign In</button>}
+          <Link to="/sign-up">First time? Create an account!</Link>
         </form>
       </RightContainer>
     </PageContainer>
@@ -82,7 +86,7 @@ const PageContainer = styled.main`
   @media (max-width: 640px) {
     flex-direction: column;
   }
-`
+`;
 
 const LeftContainer = styled.div`
   width: 63%;
@@ -95,19 +99,19 @@ const LeftContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  
+
   font-weight: 700;
   color: #fff;
 
   h1 {
     font-size: 106px;
-    font-family: 'Passion One', cursive !important;
+    font-family: "Passion One", cursive !important;
   }
 
   h2 {
     font-size: 43px;
     line-height: 64px;
-    font-family: 'Oswald', sans-serif !important;
+    font-family: "Oswald", sans-serif !important;
   }
 
   @media (max-width: 640px) {
@@ -128,7 +132,7 @@ const LeftContainer = styled.div`
       line-height: normal;
     }
   }
-`
+`;
 
 const RightContainer = styled.div`
   width: 37%;
@@ -148,24 +152,25 @@ const RightContainer = styled.div`
     row-gap: 10px;
   }
 
-  button, input {
+  button,
+  input {
     width: 70%;
     height: 65px;
     border: none;
     border-radius: 6px;
     font-size: 27px;
     font-weight: 700;
-    font-family: 'Oswald', sans-serif !important;
+    font-family: "Oswald", sans-serif !important;
   }
 
   input {
     background-color: #fff;
     padding-left: 10px;
-    color: #9F9F9F;
+    color: #9f9f9f;
   }
 
   button {
-    background-color: #1877F2;
+    background-color: #1877f2;
     text-align: center;
     color: #fff;
   }
@@ -177,9 +182,10 @@ const RightContainer = styled.div`
   @media (max-width: 640px) {
     width: 100%;
 
-    button, input {
+    button,
+    input {
       width: 90%;
       height: 55px;
     }
   }
-`
+`;

@@ -28,7 +28,7 @@ export default function TrendingHashtags() {
         console.log(err);
         navigate("/");
       });
-  }, [navigate, token]);
+  }, [navigate, token, API]);
   return (
     <>
       <TrendContainer>
