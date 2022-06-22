@@ -90,7 +90,7 @@ export default function Like({ postId }) {
         .then((res) => {
           setLikedByUser("");
           setData({
-            postLikesCount: likesData.postLikesCount - 1,
+            postLikesCount: Number(likesData.postLikesCount) - 1,
             postUsersLikes: likesData.postUsersLikes.filter(
               (user) => user.userId !== userId
             ),
@@ -104,7 +104,7 @@ export default function Like({ postId }) {
         .then((res) => {
           setLikedByUser(userData.id);
           setData({
-            postLikesCount: likesData.postLikesCount + 1,
+            postLikesCount: Number(likesData.postLikesCount) + 1,
             postUsersLikes: [
               ...likesData.postUsersLikes,
               { userId, username: userData.username },
