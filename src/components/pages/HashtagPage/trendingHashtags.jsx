@@ -39,7 +39,7 @@ export default function TrendingHashtags() {
             key={hashtag.name}
             onClick={() => navigate(`/hashtag/${hashtag.name}`)}
           >
-            #{hashtag.name}
+            # {hashtag.name}
           </HashtagContainer>
         ))}
       </TrendContainer>
