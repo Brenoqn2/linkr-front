@@ -75,7 +75,7 @@ export default function Header({ profilePic, username }) {
     getSearchResult();
   }, [searchInput, getSearchResult, getUserData, userData]);
 
-  const result = searchResult.map((user) => (
+  const result = searchInput?.length < 3 ? undefined : searchResult.map((user) => (
     <ResultItem data={user} key={user.id}></ResultItem>
   ));
 
@@ -97,7 +97,6 @@ export default function Header({ profilePic, username }) {
             debounceTimeout={300}
             placeholder="Search for people"
             onChange={(e) => setSearchInput(e.target.value)}
-            value={searchInput}
           />
           <button>
             <img src={search} alt="Search" />
