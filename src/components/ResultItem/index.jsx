@@ -53,5 +53,5 @@ const ResultContainer = styled.div`
 `
 
 const Title = styled.span`
-  color: #565656 !important;
+  color: #C5C5C5 !important;
 `;
