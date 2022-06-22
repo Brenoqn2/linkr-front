@@ -79,6 +79,7 @@ export default function Header({ profilePic, username }) {
     <ResultItem data={user} key={user.id}></ResultItem>
   ));
 
+
   const searchBarCSS = searchResult?.length ? "open" : "close";
   const menuCSS = isMenuOpen ? "open" : "close";
 

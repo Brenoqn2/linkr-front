@@ -11,8 +11,6 @@ export default function ResultItem({data}) {
         navigate(`/users/${data.id}`, {state: {username: data.username}});
     }
 
-    console.log(data.id);    
-
     let username;
     if(userData.followingIds?.some(followingId => followingId == data.id)) {
         username = <span>{data.username} <Title> • following</Title></span>;
