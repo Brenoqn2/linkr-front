@@ -80,6 +80,10 @@ const Alert = styled.div`
     justify-content: center;
     align-items: center;
     row-gap: 20px;
+
+    @media (max-width: 640px) {
+    border-radius: 0;
+    }
 `
 
 const Container = styled.div`
