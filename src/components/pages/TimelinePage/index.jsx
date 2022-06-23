@@ -1,11 +1,9 @@
 import axios from "axios";
-import { useEffect, useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState, useContext, useCallback } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
 
 import UserContext from "../../../contexts/userContext";
-import TokenContext from "../../../contexts/tokenContext";
 import PostsContext from "../../../contexts/postsContext";
 
 import PostsList from "../../PostsList";
@@ -18,45 +16,28 @@ import config from "../../../config/config.json";
 
 export default function TimelinePage() {
   const API = config.API;
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const { posts, setPosts } = useContext(PostsContext);
-  const { userData, setUserData } = useContext(UserContext);
-  const { setToken } = useContext(TokenContext);
+  const { userData } = useContext(UserContext);
   const header = GetTokenAndHeaders("headers");
-
-  function getUserData() {
-    console.log(header);
-    axios
-      .get(`${API}/user`, header)
-      .then((response) => {
-        setUserData({ ...response.data });
-        getPosts();
-      })
-      .catch((err) => {
-        console.log("DEU ERRO AQUI !");
-        console.log(err);
-        alert("Session expired, log in to continue");
-        setToken("");
-        navigate("/");
-      });
-  }
-
-  function getPosts() {
-    setLoading(true);
-    axios
-      .get(`${API}/posts`, header)
-      .then((response) => {
-        setPosts(response.data);
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setLoading(false));
-  }
+  const getPosts = useCallback(
+    (page = 0) => {
+      setLoading(true);
+      axios
+        .get(`${API}/posts?pages=${page}`, header)
+        .then((response) => {
+          setPosts(response.data);
+        })
+        .catch((err) => console.log(err))
+        .finally(() => setLoading(false));
+    },
+    //eslint-disable-next-line
+    [API, setPosts]
+  );
 
   useEffect(() => {
-    getUserData();
-    // eslint-disable-next-line
-  }, []);
+    getPosts();
+  }, [getPosts]);
 
   const postsList = posts?.length ? (
     <PostsList posts={posts}></PostsList>
