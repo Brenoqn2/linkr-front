@@ -21,6 +21,9 @@ export default function TimelinePage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const { posts, setPosts } = useContext(PostsContext);
+  // const [shareData, setShareData] = useState({
+  //   shareCount: "firstReq",
+  // });
   const { userData, setUserData } = useContext(UserContext);
   const { setToken } = useContext(TokenContext);
   const header = GetTokenAndHeaders("headers");
@@ -52,6 +55,18 @@ export default function TimelinePage() {
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
   }
+
+  // function getReposts() {
+  //   setLoading(true);
+  //   axios
+  //     .get(`http://localhost:5000/reposts/${postId}`, header)
+  //     .then((res) => {
+  //       setShareData({ shareCount: res.data.reposts });
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }
 
   useEffect(() => {
     getUserData();

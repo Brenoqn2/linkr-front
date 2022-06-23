@@ -2,48 +2,42 @@ import axios from "axios";
 import styled from "styled-components";
 import { useState, useContext } from "react";
 
-import PostsContext from "../../contexts/postsContext";
+import UserContext from "../../contexts/userContext";
 
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 import config from "../../config/config.json";
 
-export default function DeleteModal({ setIsActive, id }) {
+export default function ShareModal({ setIsActive, postId }) {
+  const { userData } = useContext(UserContext);
   const API = config.API;
   const header = GetTokenAndHeaders("headers");
   const [loading, setLoading] = useState(false);
-  const { posts, setPosts } = useContext(PostsContext);
 
-  function confirmDelete() {
+  function confirmShare() {
     setLoading(true);
     axios
-      .delete(`${API}/post/${id}`, header)
-      .then(() => {
-        setPosts(posts.filter((post) => post.id !== id));
-      })
-      .catch((err) => {
-        console.log(err);
-        alert("Nao foi possivel deletar o post");
-      })
-      .finally(() => {
+      .post(`${API}/share/${postId}`, { userRepostId: userData.id }, header)
+      .then((res) => {
         setLoading(false);
         setIsActive(false);
-      });
+      })
+      .catch((err) => console.log(err));
   }
 
-  function cancelDelete() {
+  function cancelShare() {
     setIsActive(false);
   }
 
   return (
     <Modal>
       <Alert>
-        <Container>Are you sure you want to delete this post?</Container>
+        <Container>Do you want to re-post this link?</Container>
         <Container>
-          <button onClick={cancelDelete} disabled={loading}>
-            No, go back
+          <button onClick={cancelShare} disabled={loading}>
+            No, cancel
           </button>
-          <button onClick={confirmDelete} disabled={loading}>
-            {loading ? "Deleting..." : "Yes, delete it"}
+          <button onClick={confirmShare} disabled={loading}>
+            {loading ? "Sharing..." : "Yes, share!"}
           </button>
         </Container>
       </Alert>

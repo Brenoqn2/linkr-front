@@ -5,35 +5,25 @@ import { useViewportWidth } from "../../hooks/useViewportWidth";
 import ReactHashtag from "@mdnm/react-hashtag";
 import styled from "styled-components";
 
-import DeleteModal from "../DeleteModal";
-import ShareModal from "../ShareModal";
-import EditPost from "../EditPost";
 import Like from "../Like/index";
-import Comments from "../Comments";
 import Share from "../Share";
 
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 import UserContext from "../../contexts/userContext";
 
 import defaultImage from "../../assets/images/defaultImage.jpg";
-import editIcon from "../../assets/images/edit.svg";
-import deleteIcon from "../../assets/images/trash.svg";
+import repostIcon from "../../assets/images/share.svg";
 import commentsIcon from "../../assets/images/comments.svg";
 
 import config from "../../config/config.json";
 
-export default function Post({ data }) {
+export default function Repost({ data }) {
   const API = config.API;
   const navigate = useNavigate();
   const screenWidth = useViewportWidth();
   const [metadata, setMetadata] = useState(null);
-  const [deleteModal, setDeleteModal] = useState(false);
-  const [shareModal, setShareModal] = useState(false);
-  const [editInput, setEditInput] = useState(false);
-  const [content, setContent] = useState(data.content);
-  const [comments, setComments] = useState(null);
-  const [openComments, setOpenComments] = useState(false);
-  const { userData } = useContext(UserContext);
+  const [content] = useState(data.content);
+  const [comments] = useState(null);
   const header = GetTokenAndHeaders("headers");
 
   const getMetadata = useCallback(() => {
@@ -47,25 +37,11 @@ export default function Post({ data }) {
       });
   }, [API, data, header]);
 
-  const getComments = useCallback(() => {
-    axios
-      .get(`${API}/post/${data.id}/comments`, header)
-      .then((response) => {
-        setComments(response.data);
-      })
-      .catch((err) => {
-        console.log(err);
-        alert("Error while recieving comments");
-      });
-  }, [API, data, header]);
-
   useEffect(() => {
-    console.log("useeffect do post");
-    if (metadata === null && comments === null) {
+    if (metadata === null) {
       getMetadata();
-      getComments();
     }
-  }, [data, getMetadata, getComments, metadata, comments]);
+  }, [data, getMetadata, metadata]);
 
   function addDefaultImg(e) {
     e.target.src = defaultImage;
@@ -90,104 +66,41 @@ export default function Post({ data }) {
     return text;
   }
 
-  function editPost() {
-    // setEditIput(!editIput)
-    setEditInput(!editInput);
-  }
-
-  function deletePost() {
-    setDeleteModal(true);
-  }
-
-  function postOptionsBuilder() {
-    if (data.userId === userData.id) {
-      return (
-        <Options>
-          <img src={editIcon} alt="Edit" onClick={() => editPost(data.id)} />
-          <img
-            src={deleteIcon}
-            alt="Delete"
-            onClick={() => deletePost(data.id)}
-          />
-        </Options>
-      );
-    }
-  }
-
-  function postContentBuilder() {
-    if (editInput) {
-      return (
-        <EditPost
-          data={data}
-          setIsActive={setEditInput}
-          content={content}
-          setContent={setContent}
-        />
-      );
-    } else {
-      return (
-        <ReactHashtag
-          renderHashtag={(val) => (
-            <Hashtag
-              key={val}
-              onClick={() => navigate(`/hashtag/${val.replace("#", "")}`)}>
-              {val}
-            </Hashtag>
-          )}>
-          {content}
-        </ReactHashtag>
-      );
-    }
-  }
-
-  function commentsBuilder() {
-    if (openComments) {
-      return (
-        <Comments
-          comments={comments}
-          setComments={setComments}
-          postId={data.id}
-        />
-      );
-    }
-    return undefined;
-  }
-
-  const postOptions = postOptionsBuilder();
-  const postContent = postContentBuilder();
-  const commentsElement = commentsBuilder();
-  const postWithCommentsCSS = commentsElement ? "comments_open" : undefined;
-
   return (
     <>
-      {deleteModal ? (
-        <DeleteModal id={data.id} setIsActive={setDeleteModal} />
-      ) : undefined}
-      {shareModal ? (
-        <ShareModal postId={data.id} setIsActive={setShareModal} />
-      ) : undefined}
-
+      <RepostInfo>
+        <img src={repostIcon} alt="Repost icon" />
+        <span>Re-posted by you</span>
+      </RepostInfo>
       <PostItem>
-        <div className={postWithCommentsCSS}>
+        <div>
           <Container>
             <UserPicture onClick={redirectToUser} url={data.picture} />
             <Like postId={data.id} />
-            <CommentsIcon onClick={() => setOpenComments(!openComments)}>
+            <CommentsIcon>
               <img src={commentsIcon} alt="comments" />
               <span>{comments ? `${comments.length} comments` : ""}</span>
             </CommentsIcon>
-            <Share
-              postId={data.id}
-              setShareModal={setShareModal}
-              // onClick={() => setShareModal(!shareModal)}
-            />
+            <Share postId={data.id} />
           </Container>
           <Container>
             <Head>
               <UserName onClick={redirectToUser}>{data.username}</UserName>
-              {postOptions}
             </Head>
-            <Desc>{postContent}</Desc>
+            <Desc>
+              <ReactHashtag
+                renderHashtag={(val) => (
+                  <Hashtag
+                    key={val}
+                    onClick={() =>
+                      navigate(`/hashtag/${val.replace("#", "")}`)
+                    }>
+                    {val}
+                  </Hashtag>
+                )}>
+                {content}
+              </ReactHashtag>
+            </Desc>
             <LinkSnippet onClick={() => window.open(data.link, "_blank")}>
               <div>
                 <h2>
@@ -210,7 +123,6 @@ export default function Post({ data }) {
             </LinkSnippet>
           </Container>
         </div>
-        {commentsElement}
       </PostItem>
     </>
   );
@@ -221,6 +133,7 @@ const PostItem = styled.li`
   flex-direction: column;
   justify-content: flex-start;
   margin-bottom: 20px;
+  position: relative;
 
   & > div {
     width: 95%;
@@ -232,8 +145,7 @@ const PostItem = styled.li`
     justify-content: flex-start;
 
     background-color: #171717;
-    border-radius: 16px;
-    position: relative;
+    border-radius: 0 0 16px 16px;
 
     &.comments_open {
       border-radius: 16px 16px 0 0 !important;
@@ -393,23 +305,6 @@ const LinkSnippet = styled.div`
   }
 `;
 
-const Options = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  column-gap: 10px;
-
-  img {
-    width: 14px;
-    cursor: pointer;
-  }
-
-  img:hover {
-    transform: translate(1px, -1px);
-    transition: all 0.5s ease;
-  }
-`;
-
 const CommentsIcon = styled.div`
   display: flex;
   flex-direction: column;
@@ -426,5 +321,29 @@ const CommentsIcon = styled.div`
     font-size: 11px;
     color: #fff;
     width: max-content;
+  }
+`;
+
+const RepostInfo = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  position: relative;
+  align-items: center;
+
+  width: 95%;
+  min-height: 33px;
+
+  background-color: #1e1e1e;
+  border-radius: 16px 16px 0 0;
+
+  font-size: 11px;
+  line-height: 13px;
+
+  color: #ffffff;
+
+  img {
+    width: 20px;
+    margin-left: 13px;
+    margin-right: 6px;
   }
 `;
