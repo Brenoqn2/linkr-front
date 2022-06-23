@@ -42,11 +42,9 @@ export default function HashtagPage() {
 
   useEffect(() => {
     console.log("useeffect do hashtagpage");
-    if (posts === null) {
-      setLoading(true);
-      getPosts();
-    }
-  }, [getPosts, posts]);
+    setLoading(true);
+    getPosts();
+  }, [hashtag]);
 
   const postsList = posts?.length ? (
     <PostsList posts={posts}></PostsList>
