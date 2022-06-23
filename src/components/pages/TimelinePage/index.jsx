@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState, useContext, useCallback } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
+import InfiniteScroll from "react-infinite-scroller";
 
 import UserContext from "../../../contexts/userContext";
 import PostsContext from "../../../contexts/postsContext";
@@ -17,16 +18,20 @@ import config from "../../../config/config.json";
 export default function TimelinePage() {
   const API = config.API;
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const [hasNextPage, setHasNextPage] = useState(true);
+  const [loadingNewPosts, setLoadingNewPosts] = useState(false);
   const { posts, setPosts } = useContext(PostsContext);
   const { userData } = useContext(UserContext);
   const header = GetTokenAndHeaders("headers");
   const getPosts = useCallback(
-    (page = 0) => {
+    () => {
       setLoading(true);
       axios
-        .get(`${API}/posts?pages=${page}`, header)
+        .get(`${API}/posts`, header)
         .then((response) => {
           setPosts(response.data);
+          checkPosts();
         })
         .catch((err) => console.log(err))
         .finally(() => setLoading(false));
@@ -35,12 +40,46 @@ export default function TimelinePage() {
     [API, setPosts]
   );
 
+  function getMorePosts(page) {
+    setLoadingNewPosts(true);
+    axios
+      .get(`${API}/posts?page=${page + 1}`, header)
+      .then((response) => {
+        console.log("aqui", response.data);
+        setPosts([...posts, ...response.data]);
+        setPage(page + 1);
+        checkPosts();
+        setLoadingNewPosts(false);
+      })
+      .catch((err) => console.log(err));
+  }
+
+  function checkPosts() {
+    axios
+      .get(`${API}/checkPosts?page=${page + 1}`, header)
+      .then((response) => {
+        setHasNextPage(response.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        return false;
+      });
+  }
+
   useEffect(() => {
     getPosts();
   }, [getPosts]);
 
   const postsList = posts?.length ? (
-    <PostsList posts={posts}></PostsList>
+    <InfiniteScroll
+      data-testid="episodes-infinite-scroll"
+      pageStart={0}
+      loadMore={getMorePosts}
+      hasMore={hasNextPage && !loadingNewPosts}
+      loader={<ThreeDots width={30} height={10} color={"#fff"} />}
+    >
+      <PostsList posts={posts}></PostsList>
+    </InfiniteScroll>
   ) : (
     <NoContent>There are no posts yet</NoContent>
   );
@@ -167,6 +206,7 @@ const Content = styled.div`
   display: flex;
   justify-content: space-between;
   gap: 30px;
+  margin-bottom: 30px;
 `;
 
 const PostsContent = styled.div`
