@@ -53,9 +53,9 @@ export default function UserPage() {
       console.log("to aqui ");
       setLoading(true);
       getFollowers();
-      getPosts();
     }
-  }, [getFollowers, getPosts, posts, followers]);
+    getPosts();
+  }, [id]);
 
   const postsList = posts?.length ? (
     <PostsList posts={posts}></PostsList>

@@ -26,7 +26,6 @@ export default function TimelinePage() {
   const header = GetTokenAndHeaders("headers");
 
   function getUserData() {
-    console.log(header);
     axios
       .get(`${API}/user`, header)
       .then((response) => {
