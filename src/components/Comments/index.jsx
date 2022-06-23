@@ -82,6 +82,7 @@ function InputComment({ comments, setComments, postId }) {
 }
 
 function Comment({ data }) {
+  const { userData } = useContext(UserContext);
   let username;
 
   if (data.isAuthor) {
@@ -90,8 +91,12 @@ function Comment({ data }) {
         {data.username} <Title> • post’s author</Title>
       </span>
     );
-  } else if (data?.isFollower) {
-    //TODO
+  } else if (userData.followingIds?.some(followingId => followingId == data.userId)) {
+    username = (
+        <span>
+          {data.username} <Title> • following</Title>
+        </span>
+      );
   } else {
     username = <span>{data.username}</span>;
   }

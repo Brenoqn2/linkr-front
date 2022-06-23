@@ -66,6 +66,18 @@ export default function TimelinePage() {
       });
   }
 
+  // function getReposts() {
+  //   setLoading(true);
+  //   axios
+  //     .get(`http://localhost:5000/reposts/${postId}`, header)
+  //     .then((res) => {
+  //       setShareData({ shareCount: res.data.reposts });
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }
+
   useEffect(() => {
     getPosts();
   }, [getPosts]);
