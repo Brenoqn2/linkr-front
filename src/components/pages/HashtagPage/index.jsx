@@ -16,7 +16,7 @@ import GetTokenAndHeaders from "../../Resources/GetTokenAndHeaders";
 import config from "../../../config/config.json";
 
 export default function HashtagPage() {
-  const API = config.API_LOCAL;
+  const API = config.API;
   const navigate = useNavigate();
   const [posts, setPosts] = useState(null);
   const [loading, setLoading] = useState(true);
