@@ -7,77 +7,90 @@ import PostsContext from "../../contexts/postsContext";
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 import config from "../../config/config.json";
 
-export default function DeleteModal({setIsActive, id}) {
-    const API = config.API;
-    const header = GetTokenAndHeaders("headers");
-    const [ loading, setLoading ] = useState(false);
-    const { posts, setPosts } = useContext(PostsContext);
+export default function DeleteModal({ setIsActive, id }) {
+  const API = config.API;
+  const header = GetTokenAndHeaders("headers");
+  const [loading, setLoading] = useState(false);
+  const { posts, setPosts } = useContext(PostsContext);
 
-    function confirmDelete() {
-        setLoading(true);
-        axios.delete(`${API}/post/${id}`, header)
-        .then(() => {
-            setPosts(posts.filter(post => post.id !== id));
-        })
-        .catch(err => {
-            console.log(err);
-            alert('Nao foi possivel deletar o post');
-        })
-        .finally(() => {
-            setLoading(false);
-            setIsActive(false);
-        })
-    }
-
-    function cancelDelete() {
+  function confirmDelete() {
+    setLoading(true);
+    axios
+      .delete(`${API}/post/${id}`, header)
+      .then(() => {
+        setPosts(posts.filter((post) => post.id !== id));
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Nao foi possivel deletar o post");
+      })
+      .finally(() => {
+        setLoading(false);
         setIsActive(false);
-    }
+      });
+  }
 
+  function cancelDelete() {
+    setIsActive(false);
+  }
 
-    return (
-        <Modal>
-            <Alert>
-                <Container>
-                    Are you sure you want
-                    to delete this post?
-                </Container>
-                <Container>
-                    <button onClick={cancelDelete} disabled={loading}>
-                        No, go back
-                    </button>
-                    <button onClick={confirmDelete} disabled={loading}>    
-                        {loading ? 'Deleting...' : 'Yes, delete it'}
-                    </button>
-                </Container>
-            </Alert>
-        </Modal>
-    )
+  return (
+    <Modal>
+      <Alert>
+        <Container>Are you sure you want to delete this post?</Container>
+        <Container>
+          <button onClick={cancelDelete} disabled={loading}>
+            No, go back
+          </button>
+          <button onClick={confirmDelete} disabled={loading}>
+            {loading ? "Deleting..." : "Yes, delete it"}
+          </button>
+        </Container>
+      </Alert>
+    </Modal>
+  );
 }
 
 const Modal = styled.div`
-    width: 100vw;
-    height: 100vh;
-    background: rgba(255, 255, 255, 0.9);
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.9);
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 3;
-`
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 3;
+`;
 
 const Alert = styled.div`
-    width: 597px;
-    height: 267px;
-    background-color: #333;
-    border-radius: 50px;
+  width: 597px;
+  height: 267px;
+  background-color: #333;
+  border-radius: 50px;
 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 20px;
+`;
+
+const Container = styled.div`
+  &:first-child {
+    font-size: 34px;
+    font-weight: 700;
+    color: #fff;
+    text-align: center;
+    width: 350px;
+  }
+
+  &:last-child {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     row-gap: 20px;
 
