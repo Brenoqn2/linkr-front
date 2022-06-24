@@ -23,7 +23,7 @@ export default function Repost({ data }) {
   const screenWidth = useViewportWidth();
   const [metadata, setMetadata] = useState(null);
   const [content] = useState(data.content);
-  const [comments] = useState(null);
+  const [comments, setComments] = useState(null);
   const header = GetTokenAndHeaders("headers");
 
   const getMetadata = useCallback(() => {
@@ -37,11 +37,24 @@ export default function Repost({ data }) {
       });
   }, [API, data, header]);
 
+  const getComments = useCallback(() => {
+    axios
+      .get(`${API}/post/${data.postid}/comments`, header)
+      .then((response) => {
+        setComments(response.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Error while recieving comments");
+      });
+  }, [API, data, header]);
+
   useEffect(() => {
     if (metadata === null) {
       getMetadata();
+      getComments();
     }
-  }, [data, getMetadata, metadata]);
+  }, [data, getMetadata, metadata, getComments]);
 
   function addDefaultImg(e) {
     e.target.src = defaultImage;
@@ -70,34 +83,34 @@ export default function Repost({ data }) {
     <>
       <RepostInfo>
         <img src={repostIcon} alt="Repost icon" />
-        <span>Re-posted by you</span>
+        <span>Re-posted by {data.repostuser}</span>
       </RepostInfo>
       <PostItem>
         <div>
           <Container>
             <UserPicture onClick={redirectToUser} url={data.picture} />
-            <Like postId={data.id} />
+            <Like postId={data.postid} />
             <CommentsIcon>
               <img src={commentsIcon} alt="comments" />
               <span>{comments ? `${comments.length} comments` : ""}</span>
             </CommentsIcon>
-            <Share postId={data.id} />
+            <Share postId={data.postid} />
           </Container>
           <Container>
             <Head>
-              <UserName onClick={redirectToUser}>{data.username}</UserName>
+              <UserName onClick={redirectToUser}>{data.postuser}</UserName>
             </Head>
             <Desc>
               <ReactHashtag
                 renderHashtag={(val) => (
                   <Hashtag
                     key={val}
-                    onClick={() =>
-                      navigate(`/hashtag/${val.replace("#", "")}`)
-                    }>
+                    onClick={() => navigate(`/hashtag/${val.replace("#", "")}`)}
+                  >
                     {val}
                   </Hashtag>
-                )}>
+                )}
+              >
                 {content}
               </ReactHashtag>
             </Desc>

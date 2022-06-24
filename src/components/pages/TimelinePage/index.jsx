@@ -17,7 +17,7 @@ import GetTokenAndHeaders from "../../Resources/GetTokenAndHeaders";
 import config from "../../../config/config.json";
 
 export default function TimelinePage() {
-  const API = config.API;
+  const API = config.API_LOCAL;
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [hasNextPage, setHasNextPage] = useState(true);
@@ -37,6 +37,7 @@ export default function TimelinePage() {
           clearInterval(interval);
           setHasNewPosts(false);
           setPosts(response.data);
+          console.log("RESPOSTA", response.data);
           // eslint-disable-next-line react-hooks/exhaustive-deps
           interval = setInterval(
             () => getNotifications(response.data[0].id),

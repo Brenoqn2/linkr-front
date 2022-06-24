@@ -121,20 +121,19 @@ export default function Like({ postId }) {
   return (
     <SuperLike>
       <img
+        data-tip
+        data-for={String(postId)}
         src={likedByUser ? liked : unlike}
         alt="Like"
         onClick={() => LikeThis(userData.id, postId)}
       />
-      
-      <span
-        data-tip
-        data-for={String(postId)}
-        data-place="bottom"
-      >{likesData.postLikesCount} {likesData.postLikesCount * 1 === 1 ? 'like' : 'likes'}</span>
-      
+      {likesData.postLikesCount * 1 === 1 ? (
+        <span>{likesData.postLikesCount} like</span>
+      ) : (
+        <span>{likesData.postLikesCount} likes</span>
+      )}
       <ReactTooltip
         id={String(postId)}
-        className="teste"
         place="bottom"
         effect="solid"
         type="light"
@@ -175,6 +174,7 @@ const SuperLike = styled.div`
   align-items: center;
   row-gap: 10px;
   cursor: pointer;
+
   img {
     width: 20px;
   }
