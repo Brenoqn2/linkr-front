@@ -3,6 +3,7 @@ import { useEffect, useState, useContext, useCallback } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
 import InfiniteScroll from "react-infinite-scroller";
+import refreshIcon from "../../../assets/images/refreshIcon.png";
 
 import UserContext from "../../../contexts/userContext";
 import PostsContext from "../../../contexts/postsContext";
@@ -21,16 +22,26 @@ export default function TimelinePage() {
   const [page, setPage] = useState(0);
   const [hasNextPage, setHasNextPage] = useState(true);
   const [loadingNewPosts, setLoadingNewPosts] = useState(false);
+  const [hasNewPosts, setHasNewPosts] = useState(false);
+  const [newPosts, setNewPosts] = useState(0);
   const { posts, setPosts } = useContext(PostsContext);
   const { userData } = useContext(UserContext);
   const header = GetTokenAndHeaders("headers");
+  let interval;
   const getPosts = useCallback(
     () => {
       setLoading(true);
       axios
         .get(`${API}/posts`, header)
         .then((response) => {
+          clearInterval(interval);
+          setHasNewPosts(false);
           setPosts(response.data);
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+          interval = setInterval(
+            () => getNotifications(response.data[0].id),
+            15000
+          );
           checkPosts();
         })
         .catch((err) => console.log(err))
@@ -39,6 +50,19 @@ export default function TimelinePage() {
     //eslint-disable-next-line
     [API, setPosts]
   );
+
+  function getNotifications(lastPost) {
+    axios
+      .get(`${API}/checkNewPosts/${lastPost}`, header)
+      .then((response) => {
+        console.log("NOTIFICATIONS", response.data, lastPost);
+        if (response.data.newPosts > 0) {
+          setNewPosts(response.data.newPosts);
+          setHasNewPosts(true);
+        }
+      })
+      .catch((err) => console.log(err));
+  }
 
   function getMorePosts(page) {
     setLoadingNewPosts(true);
@@ -113,6 +137,16 @@ export default function TimelinePage() {
         <Content>
           <PostsContent>
             <CreatePost updatePosts={getPosts} />
+            {hasNewPosts ? (
+              <NewPosts onClick={() => getPosts()}>
+                <p>
+                  {newPosts} new posts, load more!{" "}
+                  <img src={refreshIcon} alt="refresh" />
+                </p>
+              </NewPosts>
+            ) : (
+              <></>
+            )}
             {loading ? loadingElement : postsList}
           </PostsContent>
           <TrendingHashtags />
@@ -230,3 +264,30 @@ const PostsContent = styled.div`
   width: 100%;
 `;
 
+const NewPosts = styled.div`
+  width: 611px;
+  max-width: 80%;
+  height: 61px;
+  background: #1877f2;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 16px;
+  margin: 0 auto;
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  p {
+    font-family: "Lato";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+
+    color: #ffffff;
+    img {
+      width: 22px;
+      height: 16px;
+      margin-left: 14px;
+    }
+  }
+`;
