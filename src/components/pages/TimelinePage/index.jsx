@@ -17,7 +17,7 @@ import GetTokenAndHeaders from "../../Resources/GetTokenAndHeaders";
 import config from "../../../config/config.json";
 
 export default function TimelinePage() {
-  const API = config.API_LOCAL;
+  const API = config.API;
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [hasNextPage, setHasNextPage] = useState(true);
