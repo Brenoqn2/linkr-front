@@ -112,7 +112,7 @@ export default function TimelinePage() {
       data-testid="episodes-infinite-scroll"
       pageStart={0}
       loadMore={getMorePosts}
-      hasMore={hasNextPage && !loadingNewPosts}
+      hasMore={!loadingNewPosts}
       loader={<ThreeDots width={30} height={10} color={"#fff"} />}
     >
       <PostsList posts={posts}></PostsList>
