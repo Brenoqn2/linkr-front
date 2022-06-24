@@ -382,4 +382,12 @@ const RepostInfo = styled.div`
     margin-left: 13px;
     margin-right: 6px;
   }
+
+  @media (max-width: 951px) {
+    width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    border-radius: 0;
+  }
 `;
