@@ -73,7 +73,7 @@ function InputComment({ comments, setComments, postId }) {
             setNewComment(e.target.value);
           }}
         />
-        <button type="submit" className={disabledCSS}>
+        <button type="submit" className={disabledCSS} disabled={loading}>
           <img src={planeIcon} alt="Send" />
         </button>
       </form>
@@ -125,11 +125,20 @@ const CommentsSection = styled.section`
   justify-content: flex-start;
   align-items: flex-start;
   row-gap: 15px;
+
+  @media (max-width: 951px) {
+    width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    border-radius: 0;    
+  }
 `;
 
 const CreateComment = styled.div`
   width: 100%;
   height: 83px;
+  padding-right: 20px;
 
   display: flex;
   justify-content: flex-start;
@@ -147,7 +156,7 @@ const CreateComment = styled.div`
   }
 
   form {
-    width: 90%;
+    width: 100%;
     height: 39px;
     border-radius: 8px;
 
@@ -199,7 +208,7 @@ const CommentContainer = styled.ul`
 
   &::after {
     content: "";
-    width: calc(90% + 59px);
+    width: calc(100% - 20px);
     height: 1px;
     background-color: #353535;
     position: absolute;
@@ -231,6 +240,17 @@ const CommentContainer = styled.ul`
 
   p {
     color: #acacac;
+  }
+
+  @media (max-width: 640px) {
+    &::after {
+    content: "";
+    width: calc(100% - 20px);
+    height: 1px;
+    background-color: #353535;
+    position: absolute;
+    bottom: 0;
+  }
   }
 `;
 

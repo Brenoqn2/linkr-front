@@ -46,12 +46,9 @@ export default function HashtagPage() {
 
   useEffect(() => {
     console.log("useeffect do hashtagpage");
-    if (posts === null) {
-      setLoading(true);
-      console.log("getposts");
-      getPosts();
-    }
-  }, [getPosts, posts]);
+    setLoading(true);
+    getPosts();
+  }, [hashtag]);
 
   function getMorePosts(page) {
     console.log("PAGINA", page);
@@ -82,6 +79,7 @@ export default function HashtagPage() {
 
   const postsList = posts?.length ? (
     <InfiniteScroll
+      className="infiniteScroll"
       data-testid="episodes-infinite-scroll"
       pageStart={0}
       loadMore={getMorePosts}

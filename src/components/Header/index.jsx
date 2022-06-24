@@ -67,13 +67,14 @@ export default function Header({ profilePic, username }) {
   }
 
   useEffect(() => {
-    if (userData === null) {
-      getUserData();
-    }
     console.log("useeffect do header");
+    getUserData();
+  }, []);
+
+  useEffect(() => {
     if (!searchInput) return;
     getSearchResult();
-  }, [searchInput, getSearchResult, getUserData, userData]);
+  }, [searchInput])
 
   const result = searchInput?.length < 3 ? undefined : searchResult.map((user) => (
     <ResultItem data={user} key={user.id}></ResultItem>

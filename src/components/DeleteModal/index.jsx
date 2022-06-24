@@ -77,41 +77,46 @@ const Alert = styled.div`
   justify-content: center;
   align-items: center;
   row-gap: 20px;
+
+  @media (max-width: 640px) {
+    border-radius: 0;
+  }
 `;
 
 const Container = styled.div`
-  &:first-child {
-    font-size: 34px;
-    font-weight: 700;
-    color: #fff;
-    text-align: center;
-    width: 350px;
-  }
 
-  &:last-child {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    column-gap: 20px;
-  }
+    &:first-child {
+        font-size: 34px;
+        font-weight: 700;
+        color: #fff;
+        text-align: center;
+        width: 350px;
+    }
 
-  button {
-    width: 134px;
-    height: 37px;
-    border-radius: 5px;
-    border: none;
+    &:last-child {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        column-gap: 20px;
+    }
 
-    font-size: 18px;
-    font-weight: 700;
-  }
+    button {
+        width: 134px;
+        height: 37px;
+        border-radius: 5px;
+        border: none;
+        
+        font-size: 18px;
+        font-weight: 700;
+    }
 
-  button:first-child {
-    background-color: #fff;
-    color: #1877f2;
-  }
+    button:first-child {
+        background-color: #fff;
+        color:#1877F2;
+    }
 
-  button:last-child {
-    background-color: #1877f2;
-    color: #fff;
-  }
-`;
+    button:last-child {
+        background-color: #1877F2;
+        color: #fff;
+    }
+`

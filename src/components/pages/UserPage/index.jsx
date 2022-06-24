@@ -23,7 +23,7 @@ export default function UserPage() {
 
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState(null);
-  const { userData } = useContext(UserContext);
+  const { userData, setUserData } = useContext(UserContext);
   const [followers, setFollowers] = useState([]);
   const [able, setAble] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(true);
@@ -84,9 +84,9 @@ export default function UserPage() {
       console.log("to aqui ");
       setLoading(true);
       getFollowers();
-      getPosts();
     }
-  }, [getFollowers, getPosts, posts, followers]);
+    getPosts();
+  }, [id]);
 
   const loadingElement = (
     <LoadingContainer>
@@ -97,6 +97,7 @@ export default function UserPage() {
 
   const postsList = posts?.length ? (
     <InfiniteScroll
+      className="infiniteScroll"
       data-testid="episodes-infinite-scroll"
       pageStart={0}
       loadMore={getMorePosts}
@@ -110,7 +111,7 @@ export default function UserPage() {
   );
 
   const isUser = Number(id) === Number(userData.id);
-  let isFollow = followers.includes(userData.id);
+  let isFollow = userData.followingIds.includes(Number(id));
   const options = isUser ? "My Followers" : isFollow ? "Unfollow" : "Follow";
 
   // userId é o id do usuário
@@ -131,6 +132,8 @@ export default function UserPage() {
         .post(`${API}/unfollow/${followerId}`, { userId: userData.id }, header)
         .then((res) => {
           getFollowers();
+          setAble(true);
+          setUserData({...userData, followingIds: userData.followingIds.filter(id => id !== Number(followerId))});
         })
         .catch((err) => {
           console.log(err);
@@ -141,6 +144,8 @@ export default function UserPage() {
         .post(`${API}/follow/${followerId}`, { userId: userData.id }, header)
         .then((res) => {
           getFollowers();
+          setAble(true);
+          setUserData({...userData, followingIds: [...userData.followingIds, Number(followerId)]});
         })
         .catch((err) => {
           console.log(err);
@@ -157,6 +162,7 @@ export default function UserPage() {
         <div className="follow-btn">
           <h1>{`${location.state?.username || userData?.username}'s posts`}</h1>
           <button
+            className={isFollow  ? 'unfollow' : undefined}
             onClick={() => (isUser ? ListFollow(userData.id) : Follow(id))}
           >
             {able ? options : Loader}
@@ -258,6 +264,7 @@ const Main = styled.div`
     width: 100%;
     height: 50px;
     display: flex;
+
     button {
       display: flex;
       justify-content: center;
@@ -275,6 +282,13 @@ const Main = styled.div`
       text-align: center;
       color: #ffffff;
       cursor: pointer;
+      transition: all .5 ease-in;
+    }
+
+    .unfollow {
+      background-color: #fff;
+      color: #1877f2;
+      transition: all .5 ease-in;
     }
   }
 

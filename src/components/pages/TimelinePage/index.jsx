@@ -108,6 +108,7 @@ export default function TimelinePage() {
 
   const postsList = posts?.length ? (
     <InfiniteScroll
+      className="infiniteScroll"
       data-testid="episodes-infinite-scroll"
       pageStart={0}
       loadMore={getMorePosts}
