@@ -111,12 +111,12 @@ export default function Repost({ data }) {
         <div className={postWithCommentsCSS}>
           <Container>
             <UserPicture onClick={redirectToUser} url={data.picture} />
-            <Like postId={data.id} />
+            <Like postId={data.postid} />
             <CommentsIcon onClick={() => setOpenComments(!openComments)}>
               <img src={commentsIcon} alt="comments" />
               <span>{comments ? `${comments.length} comments` : "comments"}</span>
             </CommentsIcon>
-            <Share postId={data.id} />
+            <Share postId={data.postid} />
           </Container>
           <Container>
             <Head>
@@ -381,5 +381,13 @@ const RepostInfo = styled.div`
     width: 20px;
     margin-left: 13px;
     margin-right: 6px;
+  }
+
+  @media (max-width: 951px) {
+    width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    border-radius: 0;
   }
 `;
