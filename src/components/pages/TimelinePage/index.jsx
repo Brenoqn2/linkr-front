@@ -106,20 +106,27 @@ export default function TimelinePage() {
     getPosts();
   }, [getPosts]);
 
-  const postsList = posts?.length ? (
-    <InfiniteScroll
-      className="infiniteScroll"
-      data-testid="episodes-infinite-scroll"
-      pageStart={0}
-      loadMore={getMorePosts}
-      hasMore={hasNextPage && !loadingNewPosts}
-      loader={<ThreeDots width={30} height={10} color={"#fff"} />}
-    >
-      <PostsList posts={posts}></PostsList>
-    </InfiniteScroll>
-  ) : (
-    <NoContent>There are no posts yet</NoContent>
-  );
+
+  let postsList;
+  if(!userData?.followingIds?.length) {
+    postsList = <NoContent>You don't follow anyone yet. Search for new friends!</NoContent> 
+  } else {
+    postsList = posts?.length ? (
+      <InfiniteScroll
+        className="infiniteScroll"
+        data-testid="episodes-infinite-scroll"
+        pageStart={0}
+        loadMore={getMorePosts}
+        hasMore={hasNextPage && !loadingNewPosts}
+        loader={<ThreeDots width={30} height={10} color={"#fff"} />}
+      >
+        <PostsList posts={posts}></PostsList>
+      </InfiniteScroll>
+    ) : (
+      <NoContent>There are no posts yet</NoContent>
+    );
+  }
+
 
   const loadingElement = (
     <LoadingContainer>
