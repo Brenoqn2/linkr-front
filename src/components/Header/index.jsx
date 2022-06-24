@@ -67,10 +67,8 @@ export default function Header({ profilePic, username }) {
   }
 
   useEffect(() => {
-    if (userData === null) {
-      getUserData();
-    }
     console.log("useeffect do header");
+    getUserData();
     if (!searchInput) return;
     getSearchResult();
   }, [searchInput, getSearchResult, getUserData, userData]);

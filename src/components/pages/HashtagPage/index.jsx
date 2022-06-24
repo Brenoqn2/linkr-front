@@ -3,6 +3,7 @@ import { useEffect, useState, useContext, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
+import InfiniteScroll from "react-infinite-scroller";
 
 import UserContext from "../../../contexts/userContext";
 import TokenContext from "../../../contexts/tokenContext";
@@ -19,6 +20,9 @@ export default function HashtagPage() {
   const navigate = useNavigate();
   const [posts, setPosts] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [hasNextPage, setHasNextPage] = useState(true);
+  const [loadingNewPosts, setLoadingNewPosts] = useState(false);
+  const [page, setPage] = useState(1);
 
   const { userData } = useContext(UserContext);
   const { setToken } = useContext(TokenContext);
@@ -46,8 +50,43 @@ export default function HashtagPage() {
     getPosts();
   }, [hashtag]);
 
+  function getMorePosts(page) {
+    console.log("PAGINA", page);
+    setLoadingNewPosts(true);
+    axios
+      .get(`${API}/hashtag/${hashtag.toLowerCase()}?page=${page + 1}`, header)
+      .then((response) => {
+        console.log("aqui", response.data);
+        setPosts([...posts, ...response.data]);
+        setPage(page + 1);
+        checkPosts();
+        setLoadingNewPosts(false);
+      })
+      .catch((err) => console.log(err));
+  }
+
+  function checkPosts() {
+    axios
+      .get(`${API}/checkPosts?page=${page + 2}`, header)
+      .then((response) => {
+        setHasNextPage(response.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        return false;
+      });
+  }
+
   const postsList = posts?.length ? (
-    <PostsList posts={posts}></PostsList>
+    <InfiniteScroll
+      data-testid="episodes-infinite-scroll"
+      pageStart={0}
+      loadMore={getMorePosts}
+      hasMore={hasNextPage && !loadingNewPosts}
+      loader={<ThreeDots width={30} height={10} color={"#fff"} />}
+    >
+      <PostsList posts={posts}></PostsList>
+    </InfiniteScroll>
   ) : (
     <NoContent>There are no posts yet</NoContent>
   );

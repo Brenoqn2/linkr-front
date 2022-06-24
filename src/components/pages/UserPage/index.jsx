@@ -3,6 +3,7 @@ import { useEffect, useState, useContext, useCallback } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
+import InfiniteScroll from "react-infinite-scroller";
 
 import UserContext from "../../../contexts/userContext";
 
@@ -22,11 +23,41 @@ export default function UserPage() {
 
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState(null);
-  const { userData } = useContext(UserContext);
+  const { userData, setUserData } = useContext(UserContext);
   const [followers, setFollowers] = useState([]);
   const [able, setAble] = useState(false);
+  const [hasNextPage, setHasNextPage] = useState(true);
+  const [loadingNewPosts, setLoadingNewPosts] = useState(false);
+  const [page, setPage] = useState(1);
 
   const header = GetTokenAndHeaders("headers");
+
+  function getMorePosts(page) {
+    console.log("PAGINA", page);
+    setLoadingNewPosts(true);
+    axios
+      .get(`${API}/users/${id}?page=${page + 1}`, header)
+      .then((response) => {
+        console.log("aqui", response.data);
+        setPosts([...posts, ...response.data]);
+        setPage(page + 1);
+        checkPosts();
+        setLoadingNewPosts(false);
+      })
+      .catch((err) => console.log(err));
+  }
+
+  function checkPosts() {
+    axios
+      .get(`${API}/users/checkPosts/${id}?page=${page + 2}`, header)
+      .then((response) => {
+        setHasNextPage(response.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        return false;
+      });
+  }
 
   const getFollowers = useCallback(() => {
     axios.get(`${API}/followers/${id}`, header).then((res) => {
@@ -57,12 +88,6 @@ export default function UserPage() {
     getPosts();
   }, [id]);
 
-  const postsList = posts?.length ? (
-    <PostsList posts={posts}></PostsList>
-  ) : (
-    <NoContent>There are no posts yet</NoContent>
-  );
-
   const loadingElement = (
     <LoadingContainer>
       <span>Loading </span>
@@ -70,8 +95,22 @@ export default function UserPage() {
     </LoadingContainer>
   );
 
+  const postsList = posts?.length ? (
+    <InfiniteScroll
+      data-testid="episodes-infinite-scroll"
+      pageStart={0}
+      loadMore={getMorePosts}
+      hasMore={hasNextPage && !loadingNewPosts}
+      loader={loadingElement}
+    >
+      <PostsList posts={posts}></PostsList>
+    </InfiniteScroll>
+  ) : (
+    <NoContent>There are no posts yet</NoContent>
+  );
+
   const isUser = Number(id) === Number(userData.id);
-  let isFollow = followers.includes(userData.id);
+  let isFollow = userData.followingIds.includes(Number(id));
   const options = isUser ? "My Followers" : isFollow ? "Unfollow" : "Follow";
 
   // userId é o id do usuário
@@ -92,6 +131,7 @@ export default function UserPage() {
         .post(`${API}/unfollow/${followerId}`, { userId: userData.id }, header)
         .then((res) => {
           getFollowers();
+          setUserData({...userData, followingIds: userData.followingIds.filter(id => id !== followerId)});
         })
         .catch((err) => {
           console.log(err);
@@ -102,6 +142,7 @@ export default function UserPage() {
         .post(`${API}/follow/${followerId}`, { userId: userData.id }, header)
         .then((res) => {
           getFollowers();
+          setUserData({...userData, followingIds: [...userData.followingIds, followerId]});
         })
         .catch((err) => {
           console.log(err);
