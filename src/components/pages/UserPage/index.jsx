@@ -132,6 +132,7 @@ export default function UserPage() {
         .post(`${API}/unfollow/${followerId}`, { userId: userData.id }, header)
         .then((res) => {
           getFollowers();
+          setAble(true);
           setUserData({...userData, followingIds: userData.followingIds.filter(id => id !== Number(followerId))});
         })
         .catch((err) => {
@@ -143,6 +144,7 @@ export default function UserPage() {
         .post(`${API}/follow/${followerId}`, { userId: userData.id }, header)
         .then((res) => {
           getFollowers();
+          setAble(true);
           setUserData({...userData, followingIds: [...userData.followingIds, Number(followerId)]});
         })
         .catch((err) => {
@@ -160,6 +162,7 @@ export default function UserPage() {
         <div className="follow-btn">
           <h1>{`${location.state?.username || userData?.username}'s posts`}</h1>
           <button
+            className={isFollow  ? 'unfollow' : undefined}
             onClick={() => (isUser ? ListFollow(userData.id) : Follow(id))}
           >
             {able ? options : Loader}
@@ -261,6 +264,7 @@ const Main = styled.div`
     width: 100%;
     height: 50px;
     display: flex;
+
     button {
       display: flex;
       justify-content: center;
@@ -278,6 +282,13 @@ const Main = styled.div`
       text-align: center;
       color: #ffffff;
       cursor: pointer;
+      transition: all .5 ease-in;
+    }
+
+    .unfollow {
+      background-color: #fff;
+      color: #1877f2;
+      transition: all .5 ease-in;
     }
   }
 
