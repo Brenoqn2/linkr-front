@@ -39,9 +39,9 @@ export default function Share({ postId, setShareModal }) {
     <ShareContainer>
       <img src={icon} alt="Share" onClick={() => shareThis()} />
       {shareData.shareCount * 1 === 1 ? (
-        <span>{shareData.shareCount} re-post</span>
+        <span>{shareData.shareCount === "firstReq" ? undefined : shareData.shareCount} re-post</span>
       ) : (
-        <span>{shareData.shareCount} re-posts</span>
+        <span>{shareData.shareCount === "firstReq" ? undefined : shareData.shareCount} re-posts</span>
       )}
     </ShareContainer>
   );
