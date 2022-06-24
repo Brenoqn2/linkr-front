@@ -131,7 +131,7 @@ export default function UserPage() {
         .post(`${API}/unfollow/${followerId}`, { userId: userData.id }, header)
         .then((res) => {
           getFollowers();
-          setUserData({...userData, followingIds: userData.followingIds.filter(id => id !== followerId)});
+          setUserData({...userData, followingIds: userData.followingIds.filter(id => id !== Number(followerId))});
         })
         .catch((err) => {
           console.log(err);
@@ -142,7 +142,7 @@ export default function UserPage() {
         .post(`${API}/follow/${followerId}`, { userId: userData.id }, header)
         .then((res) => {
           getFollowers();
-          setUserData({...userData, followingIds: [...userData.followingIds, followerId]});
+          setUserData({...userData, followingIds: [...userData.followingIds, Number(followerId)]});
         })
         .catch((err) => {
           console.log(err);
