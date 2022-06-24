@@ -7,7 +7,7 @@ import config from "../../config/config.json";
 
 import icon from "../../assets/images/share.svg";
 
-export default function Share({ postId, setShareModal }) {
+export default function Share({ postId, setShareModal, repost = false }) {
   const API = config.API;
   const header = GetTokenAndHeaders("headers");
 
@@ -29,19 +29,31 @@ export default function Share({ postId, setShareModal }) {
   }, [shareData.shareCount, header, postId, API]);
 
   function shareThis() {
-    setShareData({
-      shareCount: Number(shareData.shareCount) + 1,
-    });
-    setShareModal(true);
+    if (repost === false) {
+      setShareData({
+        shareCount: Number(shareData.shareCount) + 1,
+      });
+      setShareModal(true);
+    }
   }
 
   return (
     <ShareContainer>
       <img src={icon} alt="Share" onClick={() => shareThis()} />
       {shareData.shareCount * 1 === 1 ? (
-        <span>{shareData.shareCount === "firstReq" ? undefined : shareData.shareCount} re-post</span>
+        <span>
+          {shareData.shareCount === "firstReq"
+            ? undefined
+            : shareData.shareCount}{" "}
+          re-post
+        </span>
       ) : (
-        <span>{shareData.shareCount === "firstReq" ? undefined : shareData.shareCount} re-posts</span>
+        <span>
+          {shareData.shareCount === "firstReq"
+            ? undefined
+            : shareData.shareCount}{" "}
+          re-posts
+        </span>
       )}
     </ShareContainer>
   );

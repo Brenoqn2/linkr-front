@@ -60,7 +60,7 @@ export default function Repost({ data }) {
 
   useEffect(() => {
     getComments();
-  }, [])
+  }, []);
 
   function addDefaultImg(e) {
     e.target.src = defaultImage;
@@ -105,7 +105,10 @@ export default function Repost({ data }) {
     <>
       <RepostInfo>
         <img src={repostIcon} alt="Repost icon" />
-        <span>Re-posted by {userData.username === data.repostuser ? 'you' : data.repostuser}</span>
+        <span>
+          Re-posted by{" "}
+          {userData.username === data.repostuser ? "you" : data.repostuser}
+        </span>
       </RepostInfo>
       <PostItem>
         <div className={postWithCommentsCSS}>
@@ -114,9 +117,11 @@ export default function Repost({ data }) {
             <Like postId={data.postid} />
             <CommentsIcon onClick={() => setOpenComments(!openComments)}>
               <img src={commentsIcon} alt="comments" />
-              <span>{comments ? `${comments.length} comments` : "comments"}</span>
+              <span>
+                {comments ? `${comments.length} comments` : "comments"}
+              </span>
             </CommentsIcon>
-            <Share postId={data.postid} />
+            <Share postId={data.postid} repost={true} />
           </Container>
           <Container>
             <Head>
@@ -127,12 +132,12 @@ export default function Repost({ data }) {
                 renderHashtag={(val) => (
                   <Hashtag
                     key={val}
-                    onClick={() =>
-                      navigate(`/hashtag/${val.replace("#", "")}`)
-                    }>
+                    onClick={() => navigate(`/hashtag/${val.replace("#", "")}`)}
+                  >
                     {val}
                   </Hashtag>
-                )}>
+                )}
+              >
                 {content}
               </ReactHashtag>
             </Desc>
