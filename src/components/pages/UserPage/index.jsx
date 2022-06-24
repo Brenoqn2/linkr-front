@@ -97,6 +97,7 @@ export default function UserPage() {
 
   const postsList = posts?.length ? (
     <InfiniteScroll
+      className="infiniteScroll"
       data-testid="episodes-infinite-scroll"
       pageStart={0}
       loadMore={getMorePosts}

@@ -10,6 +10,10 @@ const GlobalStyle = createGlobalStyle`
     h1 {
         font-family: 'Oswald', sans-serif !important;
     }
+
+    .infiniteScroll {
+        width: 100%;
+    }
 `
 
 export default GlobalStyle;
