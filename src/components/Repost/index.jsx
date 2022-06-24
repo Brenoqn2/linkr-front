@@ -7,6 +7,7 @@ import styled from "styled-components";
 
 import Like from "../Like/index";
 import Share from "../Share";
+import Comments from "../Comments";
 
 import GetTokenAndHeaders from "../Resources/GetTokenAndHeaders";
 import UserContext from "../../contexts/userContext";
@@ -23,17 +24,31 @@ export default function Repost({ data }) {
   const screenWidth = useViewportWidth();
   const [metadata, setMetadata] = useState(null);
   const [content] = useState(data.content);
-  const [comments] = useState(null);
+  const [comments, setComments] = useState(null);
+  const [openComments, setOpenComments] = useState(false);
+  const { userData } = useContext(UserContext);
   const header = GetTokenAndHeaders("headers");
 
   const getMetadata = useCallback(() => {
     axios
-      .get(`${API}/posts/${data.id}/metadata`, header)
+      .get(`${API}/posts/${data.postid}/metadata`, header)
       .then((response) => {
         setMetadata(response.data);
       })
       .catch((err) => {
         console.log(err);
+      });
+  }, [API, data, header]);
+
+  const getComments = useCallback(() => {
+    axios
+      .get(`${API}/post/${data.postid}/comments`, header)
+      .then((response) => {
+        setComments(response.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Error while recieving comments");
       });
   }, [API, data, header]);
 
@@ -43,13 +58,17 @@ export default function Repost({ data }) {
     }
   }, [data, getMetadata, metadata]);
 
+  useEffect(() => {
+    getComments();
+  }, [])
+
   function addDefaultImg(e) {
     e.target.src = defaultImage;
   }
 
   function redirectToUser() {
     navigate(`/users/${data.userId}`, {
-      state: { username: data.username },
+      state: { username: data.postuser },
     });
   }
 
@@ -66,26 +85,42 @@ export default function Repost({ data }) {
     return text;
   }
 
+  function commentsBuilder() {
+    if (openComments) {
+      return (
+        <Comments
+          comments={comments}
+          setComments={setComments}
+          postId={data.postid}
+        />
+      );
+    }
+    return undefined;
+  }
+
+  const commentsElement = commentsBuilder();
+  const postWithCommentsCSS = commentsElement ? "comments_open" : undefined;
+
   return (
     <>
       <RepostInfo>
         <img src={repostIcon} alt="Repost icon" />
-        <span>Re-posted by you</span>
+        <span>Re-posted by {userData.username === data.repostuser ? 'you' : data.repostuser}</span>
       </RepostInfo>
       <PostItem>
-        <div>
+        <div className={postWithCommentsCSS}>
           <Container>
             <UserPicture onClick={redirectToUser} url={data.picture} />
             <Like postId={data.id} />
-            <CommentsIcon>
+            <CommentsIcon onClick={() => setOpenComments(!openComments)}>
               <img src={commentsIcon} alt="comments" />
-              <span>{comments ? `${comments.length} comments` : ""}</span>
+              <span>{comments ? `${comments.length} comments` : "comments"}</span>
             </CommentsIcon>
             <Share postId={data.id} />
           </Container>
           <Container>
             <Head>
-              <UserName onClick={redirectToUser}>{data.username}</UserName>
+              <UserName onClick={redirectToUser}>{data.postuser}</UserName>
             </Head>
             <Desc>
               <ReactHashtag
@@ -123,6 +158,7 @@ export default function Repost({ data }) {
             </LinkSnippet>
           </Container>
         </div>
+        {commentsElement}
       </PostItem>
     </>
   );
@@ -148,7 +184,7 @@ const PostItem = styled.li`
     border-radius: 0 0 16px 16px;
 
     &.comments_open {
-      border-radius: 16px 16px 0 0 !important;
+      border-radius: 0 !important;
     }
 
     @media (max-width: 951px) {
