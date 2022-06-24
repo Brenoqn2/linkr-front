@@ -1,11 +1,10 @@
 import axios from "axios";
-import { useEffect, useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState, useContext, useCallback } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
+import InfiniteScroll from "react-infinite-scroller";
 
 import UserContext from "../../../contexts/userContext";
-import TokenContext from "../../../contexts/tokenContext";
 import PostsContext from "../../../contexts/postsContext";
 
 import PostsList from "../../PostsList";
@@ -18,42 +17,53 @@ import config from "../../../config/config.json";
 
 export default function TimelinePage() {
   const API = config.API;
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const [hasNextPage, setHasNextPage] = useState(true);
+  const [loadingNewPosts, setLoadingNewPosts] = useState(false);
   const { posts, setPosts } = useContext(PostsContext);
-  // const [shareData, setShareData] = useState({
-  //   shareCount: "firstReq",
-  // });
-  const { userData, setUserData } = useContext(UserContext);
-  const { setToken } = useContext(TokenContext);
+  const { userData } = useContext(UserContext);
   const header = GetTokenAndHeaders("headers");
+  const getPosts = useCallback(
+    () => {
+      setLoading(true);
+      axios
+        .get(`${API}/posts`, header)
+        .then((response) => {
+          setPosts(response.data);
+          checkPosts();
+        })
+        .catch((err) => console.log(err))
+        .finally(() => setLoading(false));
+    },
+    //eslint-disable-next-line
+    [API, setPosts]
+  );
 
-  function getUserData() {
-    console.log(header);
+  function getMorePosts(page) {
+    setLoadingNewPosts(true);
     axios
-      .get(`${API}/user`, header)
+      .get(`${API}/posts?page=${page + 1}`, header)
       .then((response) => {
-        setUserData({ ...response.data });
-        getPosts();
+        console.log("aqui", response.data);
+        setPosts([...posts, ...response.data]);
+        setPage(page + 1);
+        checkPosts();
+        setLoadingNewPosts(false);
       })
-      .catch((err) => {
-        console.log("DEU ERRO AQUI !");
-        console.log(err);
-        alert("Session expired, log in to continue");
-        setToken("");
-        navigate("/");
-      });
+      .catch((err) => console.log(err));
   }
 
-  function getPosts() {
-    setLoading(true);
+  function checkPosts() {
     axios
-      .get(`${API}/posts`, header)
+      .get(`${API}/checkPosts?page=${page + 1}`, header)
       .then((response) => {
-        setPosts(response.data);
+        setHasNextPage(response.data);
       })
-      .catch((err) => console.log(err))
-      .finally(() => setLoading(false));
+      .catch((err) => {
+        console.log(err);
+        return false;
+      });
   }
 
   // function getReposts() {
@@ -69,12 +79,19 @@ export default function TimelinePage() {
   // }
 
   useEffect(() => {
-    getUserData();
-    // eslint-disable-next-line
-  }, []);
+    getPosts();
+  }, [getPosts]);
 
   const postsList = posts?.length ? (
-    <PostsList posts={posts}></PostsList>
+    <InfiniteScroll
+      data-testid="episodes-infinite-scroll"
+      pageStart={0}
+      loadMore={getMorePosts}
+      hasMore={hasNextPage && !loadingNewPosts}
+      loader={<ThreeDots width={30} height={10} color={"#fff"} />}
+    >
+      <PostsList posts={posts}></PostsList>
+    </InfiniteScroll>
   ) : (
     <NoContent>There are no posts yet</NoContent>
   );
@@ -201,6 +218,7 @@ const Content = styled.div`
   display: flex;
   justify-content: space-between;
   gap: 30px;
+  margin-bottom: 30px;
 `;
 
 const PostsContent = styled.div`
